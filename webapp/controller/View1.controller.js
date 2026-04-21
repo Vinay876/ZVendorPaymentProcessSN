@@ -274,16 +274,53 @@ sap.ui.define([
             }
         },
         onSubmit: function () {
-            var oInput = this.byId("idCurrency");
-            var sValue = oInput.getValue();
+            var oView = this.getView();
+            var oCurrInput = oView.byId("idCurrency");
+            var oCompInput = oView.byId("companyCode");
 
-            if (!sValue) {
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Currency is required");
+            var sCurr = oCurrInput.getValue();
+            var sComp = oCompInput.getValue();
+
+            if (!sCurr || !sComp) {
+                if (!sCurr) oCurrInput.setValueState("Error");
+                if (!sComp) oCompInput.setValueState("Error");
                 sap.m.MessageToast.show("Please fill in all mandatory fields.");
                 return;
-            } else {
-                oInput.setValueState("None");
+            }
+
+            oCurrInput.setValueState("None");
+            oCompInput.setValueState("None");
+
+            debugger;
+            var sAcc = oView.byId("idAccount").getValue();
+            var sRundate = oView.byId("idDate").getValue();
+
+            var aVendors = oView.byId("idVendor").getTokens().map(function (oToken) {
+                return oToken.getKey();
+            });
+
+            var aProfitCenters = oView.byId("idProfit").getTokens().map(function (oToken) {
+                return oToken.getKey();
+            });
+            var sMSME = oView.byId("idMSME").getSelectedKey();
+            var oData = {
+                company: sComp,
+                account: sAcc,
+                currency: sCurr,
+                rundate: sRundate,
+                vendors: aVendors,
+                profitCenters: aProfitCenters,
+                msme: sMSME
+            };
+            try {
+                var sJsonData = JSON.stringify(oData);
+                var sEncodedData = btoa(encodeURIComponent(sJsonData));
+
+                this.getOwnerComponent().getRouter().navTo("RouteVendorReport", {
+                    query: sEncodedData
+                });
+            } catch (e) {
+                sap.m.MessageBox.error("Error encoding navigation data. Please check your inputs.");
             }
         },
 

@@ -1,0 +1,16 @@
+<mvc:View
+    controllerName="zf110.controller.VendorReport"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:ui="sap.ui.table">
+    <Page id="_IDGenPage" title="Vendor Report" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <ui:Table id="idReportTable" rows="{reportModel>/results}" selectionMode="None">
+                <ui:columns>
+                    <ui:Column id="_IDGenColumn1"><Label id="_IDGenLabel7" text="Vendor"/><ui:template><Text id="_IDGenText" text="{reportModel>Supplier}"/></ui:template></ui:Column>
+                    <ui:Column id="_IDGenColumn2"><Label id="_IDGenLabel8" text="Company"/><ui:template><Text id="_IDGenText1" text="{reportModel>CompanyCode}"/></ui:template></ui:Column>
+                    </ui:columns>
+            </ui:Table>
+        </content>
+    </Page>
+</mvc:View>
