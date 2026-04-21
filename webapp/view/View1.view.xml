@@ -1,0 +1,77 @@
+<mvc:View
+    controllerName="zf110.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+
+    <Page id="_IDGenPage1" title="Vendor Payment Process">
+        <content>
+            <VBox id="_IDGenVBox" class="sapUiSmallMargin">
+                
+                <HBox id="_IDGenHBox" class="sapUiTinyMarginBottom">
+                    <Button id="_IDGenButton" text="Create New" icon="sap-icon://add" type="Emphasized" press="onCreateNew"/>
+                    <Button id="_IDGenButton1" text="Post Approved Proposal" class="sapUiTinyMarginBegin" press="onPostProposal"/>
+                    <Button id="_IDGenButton2" text="Status" class="sapUiTinyMarginBegin" press="onStatus"/>
+                </HBox>
+
+                <Panel id="_IDGenPanel" headerText="Vendor Payment Process Program - Proposal" width="100%">
+                    
+                    <f:SimpleForm id="idSimpleForm"
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        labelSpanL="3"
+                        labelSpanM="3"
+                        adjustLabelSpan="false"
+                        emptySpanL="4"
+                        emptySpanM="4"
+                        columnsL="1"
+                        columnsM="1">
+                        <f:content>
+                            
+                            <Label id="_IDGenLabel" text="Company Code" />
+                            <Input id="companyCode" showValueHelp="true" valueHelpRequest="onCompanyCodeVH" />
+
+                            <Label id="_IDGenLabel1" text="Account ID" />
+                            <Input id="idAccount" showValueHelp="true" valueHelpRequest="onAccountVH" />
+
+                            <Label id="_IDGenLabel2" text="Run Date" />
+                            <DatePicker id="idDate" />
+
+                            <Label id="_IDGenLabel3" text="Identification Number" />
+                            <Input id="idIdent" showValueHelp="true" valueHelpRequest="onIdentVH" />
+
+                            <Label id="_IDGenLabel3A" text="Currency" required="true" />
+                            <Input id="idCurrency" showValueHelp="true" valueHelpRequest="onCurrencyVH" />
+
+                            <Label id="_IDGenLabel4" text="Vendors" />
+                            <MultiInput id="idVendor" showValueHelp="true" valueHelpRequest="onVendorVH" />
+
+                            <Label id="_IDGenLabel5" text="Profit Center" />
+                            <MultiInput id="idProfit" showValueHelp="true" valueHelpRequest="onProfitVH" />
+
+                            <Label id="_IDGenLabel6" text="MSME Vendors" />
+                            <Select id="idMSME" width="100%">
+                                <items>
+                                    <core:Item id="_IDGenItem" key="" text="" /> <core:Item id="_IDGenItem1" key="MSME" text="MSME" />
+                                </items>
+                            </Select>
+
+                        </f:content>
+                    </f:SimpleForm>
+
+                    <HBox id="_IDGenHBox2" justifyContent="Start" class="sapUiLargeMarginBegin sapUiSmallMarginTop">
+                        <VBox id="_IDGenVBox1" width="26%"></VBox> 
+                        <Button id="_IDGenButton3"
+                            text="Submit"
+                            type="Emphasized"
+                            width="150px"
+                            press="onSubmit"/>
+                    </HBox>
+
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
+
