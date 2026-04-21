@@ -1,16 +1,179 @@
 <mvc:View
     controllerName="zf110.controller.VendorReport"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
     xmlns="sap.m"
-    xmlns:ui="sap.ui.table">
-    <Page id="_IDGenPage" title="Vendor Report" showNavButton="true" navButtonPress="onNavBack">
+>
+    <Page
+        id="_IDGenPage"
+        title="Vendor Report"
+        showNavButton="true"
+        navButtonPress="onNavBack"
+    >
         <content>
-            <ui:Table id="idReportTable" rows="{reportModel>/results}" selectionMode="None">
-                <ui:columns>
-                    <ui:Column id="_IDGenColumn1"><Label id="_IDGenLabel7" text="Vendor"/><ui:template><Text id="_IDGenText" text="{reportModel>Supplier}"/></ui:template></ui:Column>
-                    <ui:Column id="_IDGenColumn2"><Label id="_IDGenLabel8" text="Company"/><ui:template><Text id="_IDGenText1" text="{reportModel>CompanyCode}"/></ui:template></ui:Column>
-                    </ui:columns>
-            </ui:Table>
+            <ScrollContainer
+                id="_IDGenScrollContainer"
+                horizontal="true"
+                vertical="true"
+                height="100%"
+                width="100%"
+            >
+                <Table
+                    id="idReportTable"
+                    fixedLayout="false"
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    items="{
+                        path: 'reportModel>/',
+                        sorter: {
+                            path: 'Supplier',
+                            group: true
+                        }
+                    }"
+                >
+                    <headerToolbar>
+                        <OverflowToolbar id="_IDGenOverflowToolbar">
+                            <Title
+                                id="_IDGenTitle"
+                                text="Items ({reportModel>/length})"
+                            />
+                            <ToolbarSpacer id="_IDGenToolbarSpacer" />
+                            <Button
+                                id="_IDGenButton4"
+                                text="Save Selected"
+                                type="Emphasized"
+                                icon="sap-icon://save"
+                                press="onSaveReport"
+                            />
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column
+                            id="_IDGenColumn"
+                            width="3rem"
+                        >
+                            <Text
+                                id="_IDGenText1"
+                                text="Select"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn1"
+                            width="100px"
+                        >
+                            <Text
+                                id="_IDGenText2"
+                                text="Co. Code"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn2"
+                            width="150px"
+                        >
+                            <Text
+                                id="_IDGenText3"
+                                text="Document"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn3"
+                            width="100px"
+                        >
+                            <Text
+                                id="_IDGenText4"
+                                text="Fiscal Year"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn4"
+                            width="120px"
+                        >
+                            <Text
+                                id="_IDGenText5"
+                                text="Supplier ID"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn5"
+                            width="120px"
+                        >
+                            <Text
+                                id="_IDGenText6"
+                                text="Profit Center"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn6"
+                            width="150px"
+                            hAlign="End"
+                        >
+                            <Text
+                                id="_IDGenText7"
+                                text="Amount (INR)"
+                            />
+                        </Column>
+                        <Column
+                            id="_IDGenColumn7"
+                            width="100px"
+                        >
+                            <Text
+                                id="_IDGenText8"
+                                text="Currency"
+                            />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem
+                            id="_IDGenColumnListItem"
+                            vAlign="Middle"
+                            highlight="{= ${reportModel>isTotalRow} ? 'Information' : 'None'}"
+                        >
+                            <cells>
+                                <CheckBox
+                                    id="_IDGenCheckBox"
+                                    visible="{= !${reportModel>isTotalRow} }"
+                                    selected="{reportModel>isSelected}"
+                                />
+                                <ObjectStatus
+                                    id="_IDGenObjectStatus"
+                                    text="{reportModel>CompanyCode}"
+                                    state="{= ${reportModel>isTotalRow} ? 'Indication05' : 'None'}"
+                                    active="{reportModel>isTotalRow}"
+                                    class="{= ${reportModel>isTotalRow} ? 'boldTotalText' : '' }"
+                                />
+
+                                <Text
+                                    id="_IDGenText10"
+                                    text="{reportModel>AccountingDocument}"
+                                />
+                                <Text
+                                    id="_IDGenText11"
+                                    text="{reportModel>FiscalYear}"
+                                />
+                                <Text
+                                    id="_IDGenText12"
+                                    text="{reportModel>Supplier}"
+                                />
+                                <Text
+                                    id="_IDGenText13"
+                                    text="{reportModel>ProfitCenter}"
+                                />
+
+                                <ObjectNumber
+                                    id="_IDGenObjectNumber"
+                                    number="{reportModel>AmountInCompanyCodeCurrency}"
+                                    unit="{reportModel>TransactionCurrency}"
+                                    emphasized="{reportModel>isTotalRow}"
+                                />
+
+                                <Text
+                                    id="_IDGenText14"
+                                    text="{reportModel>TransactionCurrency}"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </ScrollContainer>
         </content>
     </Page>
 </mvc:View>
