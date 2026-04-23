@@ -3,6 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:m="sap.m"
     xmlns="sap.m"
+    xmlns:core="sap.ui.core"
 >
     <Page
         id="_IDGenPage"
@@ -10,6 +11,22 @@
         showNavButton="true"
         navButtonPress="onNavBack"
     >
+        <headerContent>
+            <OverflowToolbar id="_IDGenOverflowToolbar">
+                <Title
+                    id="_IDGenTitle"
+                    text="Items ({reportModel>/length})"
+                />
+                <ToolbarSpacer id="_IDGenToolbarSpacer" />
+                <Button
+                    id="_IDGenButton4"
+                    text="Save Selected"
+                    type="Emphasized"
+                    icon="sap-icon://save"
+                    press="onSaveReport"
+                />
+            </OverflowToolbar>
+        </headerContent>
         <content>
             <ScrollContainer
                 id="_IDGenScrollContainer"
@@ -30,97 +47,360 @@
                         }
                     }"
                 >
-                    <headerToolbar>
-                        <OverflowToolbar id="_IDGenOverflowToolbar">
-                            <Title
-                                id="_IDGenTitle"
-                                text="Items ({reportModel>/length})"
-                            />
-                            <ToolbarSpacer id="_IDGenToolbarSpacer" />
-                            <Button
-                                id="_IDGenButton4"
-                                text="Save Selected"
-                                type="Emphasized"
-                                icon="sap-icon://save"
-                                press="onSaveReport"
-                            />
-                        </OverflowToolbar>
-                    </headerToolbar>
                     <columns>
-                        <Column
-                            id="_IDGenColumn"
-                            width="3rem"
-                        >
+                        <Column id="_IDGenColumn">
                             <Text
+                                width="2.5rem"
                                 id="_IDGenText1"
                                 text="Select"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn1"
-                            width="100px"
-                        >
+                        <Column id="_IDGenColumn1">
                             <Text
+                                width="100px"
                                 id="_IDGenText2"
-                                text="Co. Code"
+                                text="Company Code"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn2"
-                            width="150px"
-                        >
+                        <Column id="_IDGenColumn2">
                             <Text
+                                width="150px"
                                 id="_IDGenText3"
-                                text="Document"
+                                text="Journal Entry"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn3"
-                            width="100px"
-                        >
+                        <Column id="_IDGenColumn3">
                             <Text
+                                width="140px"
                                 id="_IDGenText4"
+                                text="Journal Entry Type"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn4">
+                            <Text
+                                width="120px"
+                                id="_IDGenText5"
+                                text="Supplier"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn5" >
+                            <Text
+                                width="350px"
+                                id="_IDGenText6"
+                                text="Supplier Name"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn6">
+                            <Text
+                                width="80px"
+                                id="_IDGenText7"
                                 text="Fiscal Year"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn4"
-                            width="120px"
-                        >
+                        <Column id="_IDGenColumn29">
                             <Text
-                                id="_IDGenText5"
-                                text="Supplier ID"
+                                width="80px"
+                                id="_IDGenText30"
+                                text="Period"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn5"
-                            width="120px"
-                        >
+                        <Column id="_IDGenColumn7">
                             <Text
-                                id="_IDGenText6"
+                                width="120px"
+                                id="_IDGenText8"
+                                text="Industry Type"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn8">
+                            <Text
+                                width="100px"
+                                id="_IDGenText9"
+                                text="Invoice Date"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn9">
+                            <Text
+                                width="150px"
+                                id="_IDGenText10"
+                                text="Sap INV Posting Date"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn10" hAlign="Center">
+                            <Text
+                                width="180px"
+                                id="_IDGenText11"
+                                text="Days As Per Payment Term"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn11">
+                            <Text
+                                width="120px"
+                                id="_IDGenText12"
+                                text="Invoice No."
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn12">
+                            <Text
+                                width="120px"
+                                id="_IDGenText13"
+                                text="Invoice Value"
+                            />
+                        </Column>
+                        <!-- new added -->
+                        <Column id="_IDGenColumn121">
+                            <Text
+                                width="120px"
+                                id="_IDGenText131"
+                                text="House Bank"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn122">
+                            <Text
+                                width="120px"
+                                id="_IDGenText132"
+                                text="House Account"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn123">
+                            <Text
+                                width="120px"
+                                id="_IDGenText133"
+                                text="G/L Account"
+                            />
+                        </Column>
+                        <!-- End -->
+                        <Column id="_IDGenColumn35">
+                            <Text
+                                width="140px"
+                                id="_IDGenText36"
+                                text="Amount Already Paid"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn36">
+                            <Text
+                                width="120px"
+                                id="_IDGenText37"
+                                text="Balance To Be Paid"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn38" width="120px">
+                                <ObjectStatus
+                                
+                                    id="_IDGenText39"
+                                    text="Amount Proposal"
+                                    state="Success"
+                                />
+                        </Column>
+                        <Column id="_IDGenColumn381">
+                            <Text
+                                width="120px"
+                                id="_IDGenText391"
+                                text="Rate"
+                            />
+                      </Column>
+                        <Column id="_IDGenColumn13">
+                            <Text
+                                width="100px"
+                                id="_IDGenText14"
                                 text="Profit Center"
                             />
                         </Column>
+                        <Column id="_IDGenColumn14">
+                            <Text
+                                width="130px"
+                                id="_IDGenText15"
+                                text="Invoice Currency"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn15">
+                            <Text
+                                width="150px"
+                                id="_IDGenText16"
+                                text="Inv. Doc. No."
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn16">
+                            <Text
+                                width="80px"
+                                id="_IDGenText17"
+                                text="Invoice Item"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn17">
+                            <Text
+                                width="100px"
+                                id="_IDGenText18"
+                                text="PO Document Date"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn18">
+                            <Text
+                                width="100px"
+                                id="_IDGenText19"
+                                text="PO Posting Date"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn19">
+                            <Text
+                                width="150px"
+                                id="_IDGenText20"
+                                text="G/L Account Number"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn20">
+                            <Text
+                                width="150px"
+                                id="_IDGenText21"
+                                text="Material Number"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn21">
+                            <Text
+                                width="100px"
+                                id="_IDGenText22"
+                                text="Material Type"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn22">
+                            <Text
+                                width="150px"
+                                id="_IDGenText23"
+                                text="Actual Billed Quantity"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn23">
+                            <Text
+                                width="100px"
+                                id="_IDGenText24"
+                                text="PO (UOM)"
+                            />
+                        </Column>
                         <Column
-                            id="_IDGenColumn6"
-                            width="150px"
+                            id="_IDGenColumn24"
                             hAlign="End"
                         >
                             <Text
-                                id="_IDGenText7"
-                                text="Amount (INR)"
+                                width="160px"
+                                id="_IDGenText25"
+                                text="Amount in Local Currency"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn7"
-                            width="100px"
-                        >
+                        <Column id="_IDGenColumn25">
                             <Text
-                                id="_IDGenText8"
-                                text="Currency"
+                                width="100px"
+                                id="_IDGenText26"
+                                text="Currency Key"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn26">
+                            <Text
+                                width="120px"
+                                id="_IDGenText27"
+                                text="PO Number"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn27">
+                            <Text
+                                width="100px"
+                                id="_IDGenText28"
+                                text="PO Qty"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn28">
+                            <Text
+                                width="100px"
+                                id="_IDGenText29"
+                                text="Price"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn30">
+                            <Text
+                                width="120px"
+                                id="_IDGenText31"
+                                text="GRN Number"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn31">
+                            <Text
+                                width="120px"
+                                id="_IDGenText32"
+                                text="SAP Batch No."
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn32">
+                            <Text
+                                width="100px"
+                                id="_IDGenText33"
+                                text="GRN Quantity"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn33">
+                            <Text
+                                width="140px"
+                                id="_IDGenText34"
+                                text="Consumption Quantity"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn34">
+                            <Text
+                                width="100px"
+                                id="_IDGenText35"
+                                text="BalanceQ"
+                            />
+                        </Column>
+
+                        <Column id="_IDGenColumn37">
+                            <Text
+                                width="130px"
+                                id="_IDGenText38"
+                                text="Consumption (%)"
+                            />
+                        </Column>
+
+                        <Column id="_IDGenColumn39">
+                            <Text
+                                width="120px"
+                                id="_IDGenText40"
+                                text="Proposal Status"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn40">
+                            <Text
+                                width="120px"
+                                id="_IDGenText41"
+                                text="Approval1 Status"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn41">
+                            <Text
+                                width="120px"
+                                id="_IDGenText42"
+                                text="Approval2 Status"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn42">
+                            <Text
+                                width="120px"
+                                id="_IDGenText43"
+                                text="Post Status"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn43">
+                            <Text
+                                width="150px"
+                                id="_IDGenText44"
+                                text="Clearing Document No"
+                            />
+                        </Column>
+                        <Column id="_IDGenColumn44">
+                            <Text
+                                width="140px"
+                                id="_IDGenText45"
+                                text="Clearing Document Year"
                             />
                         </Column>
                     </columns>
+
                     <items>
                         <ColumnListItem
                             id="_IDGenColumnListItem"
@@ -137,37 +417,235 @@
                                     id="_IDGenObjectStatus"
                                     text="{reportModel>CompanyCode}"
                                     state="{= ${reportModel>isTotalRow} ? 'Indication05' : 'None'}"
-                                    active="{reportModel>isTotalRow}"
                                     class="{= ${reportModel>isTotalRow} ? 'boldTotalText' : '' }"
                                 />
-
                                 <Text
-                                    id="_IDGenText10"
-                                    text="{reportModel>AccountingDocument}"
+                                    id="_IDGenText46"
+                                    text="{reportModel>journalEntry}"
                                 />
                                 <Text
-                                    id="_IDGenText11"
-                                    text="{reportModel>FiscalYear}"
+                                    id="_IDGenText47"
+                                    text="{reportModel>JournalEntryType}"
                                 />
                                 <Text
-                                    id="_IDGenText12"
+                                    id="_IDGenText48"
                                     text="{reportModel>Supplier}"
                                 />
                                 <Text
-                                    id="_IDGenText13"
-                                    text="{reportModel>ProfitCenter}"
+                                    id="_IDGenText49"
+                                    text="{reportModel>SupplierFullName}"
                                 />
-
-                                <ObjectNumber
-                                    id="_IDGenObjectNumber"
-                                    number="{reportModel>AmountInCompanyCodeCurrency}"
-                                    unit="{reportModel>TransactionCurrency}"
-                                    emphasized="{reportModel>isTotalRow}"
+                                <Text
+                                    id="_IDGenText50"
+                                    text="{reportModel>FiscalYear}"
                                 />
+                                   <Text
+                                    id="_IDGenText72"
+                                    text="{reportModel>FiscalPeriod}"
+                                />
+                                <Text
+                                    id="_IDGenText51"
+                                    text="{reportModel>IndustryType}"
+                                />
+                                <!-- <Text
+                                    id="_IDGenText52"
+                                    text="{reportModel>DocumentDate}"
+                                /> -->
 
                                 <Text
-                                    id="_IDGenText14"
+                                    id="_IDGenText52"
+                                    text="{
+                                    path: 'reportModel>InvoiceDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                    pattern: 'dd.MM.yyyy'
+                                                }
+                                      }"
+                                />
+                                <!-- <Text id="_IDGenText53" text="{reportModel>PostingDate}" /> -->
+                                <Text
+                                    id="_IDGenText53"
+                                    text="{
+                                    path: 'reportModel>PostingDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                    pattern: 'dd.MM.yyyy'
+                                                }
+                                      }"
+                                />
+                                <Text
+                                    id="_IDGenText54"
+                                    text="{reportModel>Paymentdays}"
+                                />
+                                <Text
+                                    id="_IDGenText55"
+                                    text="{reportModel>invoice_No}"
+                                />
+                                <ObjectNumber
+                                    id="_IDGenObjectNumber"
+                                    number="{reportModel>invoice_Value}"
+                                />
+                                <!-- items added -->
+                                <Text
+                                    id="_IDGenText141"
+                                    text="{reportModel>HouseBank}"
+                                />
+                                <Text
+                                    id="_IDGenText142"
+                                    text="{reportModel>HouseBankAccount}"
+                                />
+                                <Text
+                                    id="_IDGenText143"
+                                    text="{reportModel>GLAccount}"
+                                />
+                                <!--  -->
+                                <Text
+                                    id="_IDGenText78"
+                                    text="{reportModel>AmountAlreadyPaid}"
+                                />
+                                <Text
+                                    id="_IDGenText79"
+                                    text="{reportModel>BalanceToBePaid}"
+                                />
+                                <Input
+                                    id="_IDGenInput"
+                                    value="{reportModel>AmountProposal}"
+                                    visible="{= !${reportModel>isTotalRow} }"
+                                    valueState="Success"
+                                />
+                                <Input
+                                    id="_IDGenInput1"
+                                    value="{reportModel>Rate}"
+                                    visible="{= !${reportModel>isTotalRow} }"
+                                    editable="{= ${reportModel>TransactionCurrency} !== 'INR' }"
+                                    valueState="Success"
+                                />
+                                <Text
+                                    id="_IDGenText56"
+                                    text="{reportModel>ProfitCenter}"
+                                />
+                                <Text
+                                    id="_IDGenText57"
                                     text="{reportModel>TransactionCurrency}"
+                                />
+                                <Text
+                                    id="_IDGenText58"
+                                    text="{reportModel>AccountingDocument}"
+                                />
+                                <Text
+                                    id="_IDGenText59"
+                                    text="{reportModel>AccountingDocumentItem}"
+                                />
+                                <Text
+                                    id="_IDGenText60"
+                                    text="{
+                                    path: 'reportModel>DocumentDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                    pattern: 'dd.MM.yyyy'
+                                                }
+                                      }"
+                                />
+                                <Text
+                                    id="_IDGenText61"
+                                    text="{
+                                    path: 'reportModel>PostingDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                    pattern: 'dd.MM.yyyy'
+                                                }
+                                      }"
+                                />
+                                <Text
+                                    id="_IDGenText62"
+                                    text="{reportModel>GLAccount}"
+                                />
+                                <Text
+                                    id="_IDGenText63"
+                                    text="{reportModel>Material}"
+                                />
+                                <Text
+                                    id="_IDGenText64"
+                                    text="{reportModel>MaterialType}"
+                                />
+                                <Text
+                                    id="_IDGenText65"
+                                    text="{reportModel>ActualBilledQuantity}"
+                                />
+                                <Text
+                                    id="_IDGenText66"
+                                    text="{reportModel>PurchaseOrderQuantityUnit}"
+                                />
+                                <Text
+                                    id="_IDGenText67"
+                                    text="{reportModel>AmountInLocalCurrency}"
+                                />
+                                <Text
+                                    id="_IDGenText68"
+                                    text="{reportModel>CompanyCodeCurrency}"
+                                />
+                                <Text
+                                    id="_IDGenText69"
+                                    text="{reportModel>PurchaseOrder}"
+                                />
+                                <Text
+                                    id="_IDGenText70"
+                                    text="{reportModel>PurchaseOrderQuantity}"
+                                />
+                                <Text
+                                    id="_IDGenText71"
+                                    text="{reportModel>NetPriceAmount}"
+                                />
+                                <Text
+                                    id="_IDGenText73"
+                                    text="{reportModel>GRNNumber}"
+                                />
+                                <Text
+                                    id="_IDGenText74"
+                                    text="{reportModel>Batch}"
+                                />
+                                <Text
+                                    id="_IDGenText75"
+                                    text="{reportModel>GRNQuantity}"
+                                />
+                                <Text
+                                    id="_IDGenText76"
+                                    text="{reportModel>ConsumptionQuantity}"
+                                />
+                                <Text
+                                    id="_IDGenText77"
+                                    text="{reportModel>BalanceQuantity}"
+                                />
+                                <!-- <Text id="_IDGenText78" text="{reportModel>AmountAlreadyPaid}" />
+                                <Text id="_IDGenText79" text="{reportModel>BalanceToBePaid}" /> -->
+                                <Text
+                                    id="_IDGenText80"
+                                    text="{reportModel>ConsumptionPercentage}"
+                                />
+                                <!-- <Input id="_IDGenInput" value="{reportModel>AmountProposal}" visible="{= !${reportModel>isTotalRow} }" /> -->
+                                <Text
+                                    id="_IDGenText81"
+                                    text="{reportModel>ProposalStatus}"
+                                />
+                                <Text
+                                    id="_IDGenText82"
+                                    text="{reportModel>Approval1Status}"
+                                />
+                                <Text
+                                    id="_IDGenText83"
+                                    text="{reportModel>Approval2Status}"
+                                />
+                                <Text
+                                    id="_IDGenText84"
+                                    text="{reportModel>PostStatus}"
+                                />
+                                <Text
+                                    id="_IDGenText85"
+                                    text="{reportModel>ClearingAccountingDocument}"
+                                />
+                                <Text
+                                    id="_IDGenText86"
+                                    text="{reportModel>ClearingDocYear}"
                                 />
                             </cells>
                         </ColumnListItem>

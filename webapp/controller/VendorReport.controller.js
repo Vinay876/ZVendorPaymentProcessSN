@@ -35,10 +35,6 @@ sap.ui.define([
                                 aFilters.push(new Filter("CompanyCode", FilterOperator.EQ, oParams.company));
                         }
 
-                        // if (oParams.account) {
-                        //         aFilters.push(new Filter("AccountingDocument", FilterOperator.EQ, oParams.account));
-                        // }
-
                         if (oParams.currency) {
                                 aFilters.push(new Filter("TransactionCurrency", FilterOperator.EQ, oParams.currency));
                         }
@@ -55,22 +51,45 @@ sap.ui.define([
                                 var aVendorFilters = oParams.vendors.map(s => new Filter("Supplier", FilterOperator.EQ, s));
                                 aFilters.push(new Filter({ filters: aVendorFilters, and: false }));
                         }
-
                         if (oParams.profitCenters && oParams.profitCenters.length > 0) {
-                                var aPCFilters = oParams.profitCenters.map(s => new Filter("ProfitCenter", FilterOperator.EQ, s));
-                                aFilters.push(new Filter({ filters: aPCFilters, and: false }));
+                                var aPCFilters = oParams.profitCenters.map(function (s) {
+                                        var sPaddedPC = String(s).padStart(10, '0');
+
+                                        return new sap.ui.model.Filter("ProfitCenter", sap.ui.model.FilterOperator.EQ, sPaddedPC);
+                                });
+                                if (aPCFilters.length > 0) {
+                                        aFilters.push(new sap.ui.model.Filter({
+                                                filters: aPCFilters,
+                                                and: false
+                                        }));
+                                }
                         }
+
+
                         oModel.read("/ZFI_VendorOpenReport", {
                                 filters: aFilters,
                                 success: function (oData) {
                                         var aItems = oData.results;
                                         var aProcessedData = [];
                                         var mGroups = {};
+
+                                        var sFixedHouseBank = oParams.houseBank || "";
+                                        var sFixedHouseAccount = oParams.account || "";
+                                        var sFixedGLAccount = oParams.glAccount || "";
+
                                         aItems.forEach(function (item) {
                                                 if (!mGroups[item.Supplier]) {
                                                         mGroups[item.Supplier] = { items: [], total: 0 };
                                                 }
-                                                mGroups[item.Supplier].items.push(Object.assign({}, item, { isSelected: false, isTotalRow: false }));
+                                                var oNewItem = Object.assign({}, item, {
+                                                        isSelected: false,
+                                                        isTotalRow: false,
+                                                        HouseBank: sFixedHouseBank,
+                                                        HouseBankAccount: sFixedHouseAccount,
+                                                        GLAccount: sFixedGLAccount
+                                                });
+                                                // mGroups[item.Supplier].items.push(Object.assign({}, item, { isSelected: false, isTotalRow: false }));
+                                                mGroups[item.Supplier].items.push(oNewItem);
                                                 mGroups[item.Supplier].total += parseFloat(item.AmountInCompanyCodeCurrency || 0);
                                         });
                                         Object.keys(mGroups).sort().forEach(function (supplierId) {
@@ -83,6 +102,9 @@ sap.ui.define([
                                                         CompanyCode: "SUB-TOTAL",
                                                         AmountInCompanyCodeCurrency: oGroup.total.toFixed(2),
                                                         TransactionCurrency: oGroup.items[0] ? oGroup.items[0].TransactionCurrency : "",
+                                                        HouseBank: "",
+                                                        HouseBankAccount: "",
+                                                        GLAccount: "",
                                                         AccountingDocument: "",
                                                         FiscalYear: "",
                                                         ProfitCenter: ""

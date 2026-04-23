@@ -101,8 +101,7 @@
                             />
                             <Input
                                 id="idCurrency"
-                                showValueHelp="true"
-                                valueHelpRequest="onCurrencyVH"
+                                editable="false"
                             />
 
                             <Label

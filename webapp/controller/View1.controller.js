@@ -39,7 +39,6 @@ sap.ui.define([
 
             this.byId("companyCode").setEditable(true);
             this.byId("idDate").setEditable(true);
-            this.byId("idCurrency").setEditable(true);
             this.byId("idAccount").setEditable(true);
             this.byId("idVendor").setEditable(true);
             this.byId("idProfit").setEditable(true);
@@ -199,12 +198,26 @@ sap.ui.define([
                     title: "Account ID",
                     supportMultiselect: false,
                     key: "HouseBankAccount",
+                    descriptionKey: "HouseBankAccountDescription",
+                    // ok: function (oEvent) {
+                    //     var aTokens = oEvent.getParameter("tokens");
+                    //     if (aTokens && aTokens.length > 0) {
+                    //         oView.byId("idAccount").setValue(aTokens[0].getKey());
+                    //     }
+                    //     that._oAccountIDDialog.close();
+                    // },
                     ok: function (oEvent) {
                         var aTokens = oEvent.getParameter("tokens");
                         if (aTokens && aTokens.length > 0) {
-                            oView.byId("idAccount").setValue(aTokens[0].getKey());
+                            var sSelectedAccount = aTokens[0].getKey();
+                            oView.byId("idAccount").setValue(sSelectedAccount);
+                            var oRowData = aTokens[0].getCustomData().find(d => d.getKey() === "row").getValue();
+
+                            if (oRowData && oRowData.BankAccountCurrency) {
+                                oView.byId("idCurrency").setValue(oRowData.BankAccountCurrency);
+                            }
                         }
-                        that._oAccountIDDialog.close();
+                        this.close();
                     },
                     cancel: function () {
                         that._oAccountIDDialog.close();
@@ -225,13 +238,20 @@ sap.ui.define([
                             name: "n2",
                             label: "Description",
                             control: new sap.m.Input()
+                        }),
+                        new sap.ui.comp.filterbar.FilterGroupItem({
+                            groupName: "gn1",
+                            name: "n3",
+                            label: "G/L Account",
+                            control: new sap.m.Input()
                         })
                     ],
                     search: function (oEvt) {
                         var aSelectionSet = oEvt.getParameter("selectionSet");
                         var sAccountID = aSelectionSet[0].getValue();
-                        var sDescription = aSelectionSet[1].getValue();;
-                        that._applyFilters(sCompanyCode, sAccountID, sDescription);
+                        var sDescription = aSelectionSet[1].getValue();
+                        var sGlaccount = aSelectionSet[2].getValue();
+                        that._applyFilters(sCompanyCode, sAccountID, sDescription, sGlaccount);
                     }
                 });
 
@@ -241,24 +261,33 @@ sap.ui.define([
                 oTable.setModel(this.getOwnerComponent().getModel());
                 var oColModel = new sap.ui.model.json.JSONModel({
                     cols: [
+                        { label: "House Bank", template: "HouseBank" },
                         { label: "Account ID", template: "HouseBankAccount" },
-                        { label: "Description", template: "HouseBankAccountDescription" }
+                        { label: "Description", template: "HouseBankAccountDescription" },
+                        { label: "G/L Account", template: "GLAccount" },
+                        { label: "Bank Account Currency", template: "BankAccountCurrency" }
                     ]
                 });
                 oTable.setModel(oColModel, "columns");
             }
-            this._applyFilters(sCompanyCode, "");
+            this._applyFilters(sCompanyCode, "", "", "");
 
             this._oAccountIDDialog.open();
         },
-        _applyFilters: function (sCompanyCode, sAccountSearch) {
+        _applyFilters: function (sCompanyCode, sAccountID, sDescription, sGlaccount) {
             var oTable = this._oAccountIDDialog.getTable();
             var aFilters = [];
             if (sCompanyCode) {
                 aFilters.push(new sap.ui.model.Filter("CompanyCode", sap.ui.model.FilterOperator.EQ, sCompanyCode));
             }
-            if (sAccountSearch) {
-                aFilters.push(new sap.ui.model.Filter("HouseBankAccount", sap.ui.model.FilterOperator.Contains, sAccountSearch));
+            if (sAccountID) {
+                aFilters.push(new sap.ui.model.Filter("HouseBankAccount", sap.ui.model.FilterOperator.Contains, sAccountID));
+            }
+            if (sDescription) {
+                aFilters.push(new sap.ui.model.Filter("HouseBankAccountDescription", sap.ui.model.FilterOperator.Contains, sDescription));
+            }
+            if (sGlaccount) {
+                aFilters.push(new sap.ui.model.Filter("GLAccount", sap.ui.model.FilterOperator.Contains, sGlaccount));
             }
             oTable.bindRows({
                 path: "/ZCDS_Comp_AccountVH",
@@ -275,11 +304,14 @@ sap.ui.define([
         },
         onSubmit: function () {
             var oView = this.getView();
+            var oModel = this.getOwnerComponent().getModel();
             var oCurrInput = oView.byId("idCurrency");
             var oCompInput = oView.byId("companyCode");
 
             var sCurr = oCurrInput.getValue();
             var sComp = oCompInput.getValue();
+            var sAcc = oView.byId("idAccount").getValue();
+            var sRundate = oView.byId("idDate").getValue();
 
             if (!sCurr || !sComp) {
                 if (!sCurr) oCurrInput.setValueState("Error");
@@ -290,39 +322,117 @@ sap.ui.define([
 
             oCurrInput.setValueState("None");
             oCompInput.setValueState("None");
+            oView.setBusy(true);
 
-            debugger;
-            var sAcc = oView.byId("idAccount").getValue();
-            var sRundate = oView.byId("idDate").getValue();
+            var aAccountFilters = [
+                new sap.ui.model.Filter("CompanyCode", sap.ui.model.FilterOperator.EQ, sComp),
+                new sap.ui.model.Filter("HouseBankAccount", sap.ui.model.FilterOperator.EQ, sAcc)
+            ];
 
-            var aVendors = oView.byId("idVendor").getTokens().map(function (oToken) {
-                return oToken.getKey();
+            oModel.read("/ZCDS_Comp_AccountVH", {
+                filters: aAccountFilters,
+                success: function (oDataResults) {
+                    oView.setBusy(false);
+                    var oAccountInfo = oDataResults.results[0] || {};
+
+                    var aVendors = oView.byId("idVendor").getTokens().map(function (oToken) {
+                        return oToken.getKey();
+                    });
+                    var aProfitCenters = oView.byId("idProfit").getTokens().map(function (oToken) {
+                        return oToken.getKey();
+                    });
+
+                    var sMSME = oView.byId("idMSME").getSelectedKey();
+                    debugger
+                    var oNavigationData = {
+                        company: sComp,
+                        account: sAcc,
+                        houseBank: oAccountInfo.HouseBank || "",
+                        glAccount: oAccountInfo.GLAccount || "",
+                        currency: sCurr,
+                        rundate: sRundate,
+                        vendors: aVendors,
+                        profitCenters: aProfitCenters,
+                        msme: sMSME
+                    };
+
+                    try {
+                        var sJsonData = JSON.stringify(oNavigationData);
+                        var sEncodedData = btoa(encodeURIComponent(sJsonData));
+                        this.getOwnerComponent().getRouter().navTo("RouteVendorReport", {
+                            query: sEncodedData
+                        });
+                    } catch (e) {
+                        sap.m.MessageBox.error("Error encoding navigation data.");
+                    }
+                }.bind(this), // Bahut zaroori hai!
+                error: function () {
+                    oView.setBusy(false);
+                    sap.m.MessageToast.show("Failed to fetch account details.");
+                }
             });
-
-            var aProfitCenters = oView.byId("idProfit").getTokens().map(function (oToken) {
-                return oToken.getKey();
-            });
-            var sMSME = oView.byId("idMSME").getSelectedKey();
-            var oData = {
-                company: sComp,
-                account: sAcc,
-                currency: sCurr,
-                rundate: sRundate,
-                vendors: aVendors,
-                profitCenters: aProfitCenters,
-                msme: sMSME
-            };
-            try {
-                var sJsonData = JSON.stringify(oData);
-                var sEncodedData = btoa(encodeURIComponent(sJsonData));
-
-                this.getOwnerComponent().getRouter().navTo("RouteVendorReport", {
-                    query: sEncodedData
-                });
-            } catch (e) {
-                sap.m.MessageBox.error("Error encoding navigation data. Please check your inputs.");
-            }
         },
+        // onSubmit: function () {
+        //     var oView = this.getView();
+        //     var oCurrInput = oView.byId("idCurrency");
+        //     var oCompInput = oView.byId("companyCode");
+
+        //     var sCurr = oCurrInput.getValue();
+        //     var sComp = oCompInput.getValue();
+
+        //     if (!sCurr || !sComp) {
+        //         if (!sCurr) oCurrInput.setValueState("Error");
+        //         if (!sComp) oCompInput.setValueState("Error");
+        //         sap.m.MessageToast.show("Please fill in all mandatory fields.");
+        //         return;
+        //     }
+
+        //     oCurrInput.setValueState("None");
+        //     oCompInput.setValueState("None");
+
+        //     var aAccountFilters = [
+        //         new sap.ui.model.Filter("CompanyCode", sap.ui.model.FilterOperator.EQ, sComp),
+        //         new sap.ui.model.Filter("HouseBankAccount", sap.ui.model.FilterOperator.EQ, sAcc)
+        //     ];
+
+        //     oModel.read("/ZCDS_Comp_AccountVH", {
+        //         filters: aAccountFilters,
+        //         success: function (oData) {
+        //             oView.setBusy(false);
+        //             var oAccountInfo = oData.results[0] || {}; // Peh
+
+        //             var sAcc = oView.byId("idAccount").getValue();
+        //             var sRundate = oView.byId("idDate").getValue();
+        //             var aVendors = oView.byId("idVendor").getTokens().map(function (oToken) {
+        //                 return oToken.getKey();
+        //             });
+        //             var aProfitCenters = oView.byId("idProfit").getTokens().map(function (oToken) {
+        //                 return oToken.getKey();
+        //             });
+        //             debugger
+        //             var sMSME = oView.byId("idMSME").getSelectedKey();
+        //             var oData = {
+        //                 company: sComp,
+        //                 account: sAcc,
+        //                 houseBank: oAccountInfo.HouseBank || "", 
+        //                 glAccount: oAccountInfo.GLAccount || "",
+        //                 currency: sCurr,
+        //                 rundate: sRundate,
+        //                 vendors: aVendors,
+        //                 profitCenters: aProfitCenters,
+        //                 msme: sMSME
+        //             };
+        //             try {
+        //                 var sJsonData = JSON.stringify(oData);
+        //                 var sEncodedData = btoa(encodeURIComponent(sJsonData));
+
+        //                 this.getOwnerComponent().getRouter().navTo("RouteVendorReport", {
+        //                     query: sEncodedData
+        //                 });
+        //             } catch (e) {
+        //                 sap.m.MessageBox.error("Error encoding navigation data. Please check your inputs.");
+        //             }
+        //         },
 
         onInputChange: function (oEvent) {
             var oInput = oEvent.getSource();
@@ -330,93 +440,93 @@ sap.ui.define([
                 oInput.setValueState("None");
             }
         },
-        onCurrencyVH: function () {
-            var oView = this.getView();
-            var that = this;
-            var oModel = this.getOwnerComponent().getModel();
+        // onCurrencyVH: function () {
+        //     var oView = this.getView();
+        //     var that = this;
+        //     var oModel = this.getOwnerComponent().getModel();
 
-            if (!this._oCurrencyDialog) {
-                this._oCurrencyDialog = new sap.ui.comp.valuehelpdialog.ValueHelpDialog({
-                    title: "TransactionCurrency",
-                    supportMultiselect: false,
-                    key: "TransactionCurrency",
+        //     if (!this._oCurrencyDialog) {
+        //         this._oCurrencyDialog = new sap.ui.comp.valuehelpdialog.ValueHelpDialog({
+        //             title: "TransactionCurrency",
+        //             supportMultiselect: false,
+        //             key: "TransactionCurrency",
 
-                    ok: function (oEvent) {
-                        var aTokens = oEvent.getParameter("tokens");
-                        if (aTokens.length > 0) {
-                            oView.byId("idCurrency").setValue(aTokens[0].getKey());
-                        }
-                        this.close();
-                    },
-                    cancel: function () { this.close(); }
-                });
-                var oFilterBar = new sap.ui.comp.filterbar.FilterBar({
-                    advancedMode: true,
-                    filterGroupItems: [
-                        new sap.ui.comp.filterbar.FilterGroupItem({
-                            groupName: "G1",
-                            name: "Currency",
-                            label: "Currency Code",
-                            control: new sap.m.Input()
-                        })
-                    ],
-                    search: function (oEvt) {
-                        var sSearchValue = oEvt.getParameter("selectionSet")[0].getValue();
-                        var oTable = that._oCurrencyDialog.getTable();
-                        var oBinding = oTable.getBinding("rows");
+        //             ok: function (oEvent) {
+        //                 var aTokens = oEvent.getParameter("tokens");
+        //                 if (aTokens.length > 0) {
+        //                     oView.byId("idCurrency").setValue(aTokens[0].getKey());
+        //                 }
+        //                 this.close();
+        //             },
+        //             cancel: function () { this.close(); }
+        //         });
+        //         var oFilterBar = new sap.ui.comp.filterbar.FilterBar({
+        //             advancedMode: true,
+        //             filterGroupItems: [
+        //                 new sap.ui.comp.filterbar.FilterGroupItem({
+        //                     groupName: "G1",
+        //                     name: "Currency",
+        //                     label: "Currency Code",
+        //                     control: new sap.m.Input()
+        //                 })
+        //             ],
+        //             search: function (oEvt) {
+        //                 var sSearchValue = oEvt.getParameter("selectionSet")[0].getValue();
+        //                 var oTable = that._oCurrencyDialog.getTable();
+        //                 var oBinding = oTable.getBinding("rows");
 
-                        if (sSearchValue) {
-                            oBinding.filter([
-                                new sap.ui.model.Filter("TransactionCurrency", sap.ui.model.FilterOperator.Contains, sSearchValue)
-                            ]);
-                        } else {
-                            oBinding.filter([]);
-                        }
-                    }
-                });
-                this._oCurrencyDialog.setFilterBar(oFilterBar);
+        //                 if (sSearchValue) {
+        //                     oBinding.filter([
+        //                         new sap.ui.model.Filter("TransactionCurrency", sap.ui.model.FilterOperator.Contains, sSearchValue)
+        //                     ]);
+        //                 } else {
+        //                     oBinding.filter([]);
+        //                 }
+        //             }
+        //         });
+        //         this._oCurrencyDialog.setFilterBar(oFilterBar);
 
-                var oTable = this._oCurrencyDialog.getTable();
+        //         var oTable = this._oCurrencyDialog.getTable();
 
-                var oColModel = new sap.ui.model.json.JSONModel({
-                    cols: [
-                        { label: "Transaction Currency", template: "TransactionCurrency" },
-                    ]
-                });
-                oTable.setModel(oColModel, "columns");
-            }
+        //         var oColModel = new sap.ui.model.json.JSONModel({
+        //             cols: [
+        //                 { label: "Transaction Currency", template: "TransactionCurrency" },
+        //             ]
+        //         });
+        //         oTable.setModel(oColModel, "columns");
+        //     }
 
-            this._oCurrencyDialog.open();
-            this._oCurrencyDialog.getTable().setBusy(true);
+        //     this._oCurrencyDialog.open();
+        //     this._oCurrencyDialog.getTable().setBusy(true);
 
-            oModel.read("/ZOpenVendorVH", {
-                urlParameters: {
-                    "$select": "TransactionCurrency"
-                },
-                success: function (oData) {
-                    var aUnique = oData.results.reduce(function (acc, current) {
-                        var x = acc.find(item => item.TransactionCurrency === current.TransactionCurrency);
-                        if (!x) {
-                            return acc.concat([current]);
-                        } else {
-                            return acc;
-                        }
-                    }, []);
-                    var oLocalModel = new sap.ui.model.json.JSONModel();
-                    oLocalModel.setData(aUnique);
+        //     oModel.read("/ZOpenVendorVH", {
+        //         urlParameters: {
+        //             "$select": "TransactionCurrency"
+        //         },
+        //         success: function (oData) {
+        //             var aUnique = oData.results.reduce(function (acc, current) {
+        //                 var x = acc.find(item => item.TransactionCurrency === current.TransactionCurrency);
+        //                 if (!x) {
+        //                     return acc.concat([current]);
+        //                 } else {
+        //                     return acc;
+        //                 }
+        //             }, []);
+        //             var oLocalModel = new sap.ui.model.json.JSONModel();
+        //             oLocalModel.setData(aUnique);
 
-                    var oTable = that._oCurrencyDialog.getTable();
-                    oTable.setModel(oLocalModel);
-                    that._oCurrencyDialog.update();
-                    oTable.bindRows("/");
+        //             var oTable = that._oCurrencyDialog.getTable();
+        //             oTable.setModel(oLocalModel);
+        //             that._oCurrencyDialog.update();
+        //             oTable.bindRows("/");
 
-                    oTable.setBusy(false);
-                },
-                error: function () {
-                    that._oCurrencyDialog.getTable().setBusy(false);
-                }
-            });
-        },
+        //             oTable.setBusy(false);
+        //         },
+        //         error: function () {
+        //             that._oCurrencyDialog.getTable().setBusy(false);
+        //         }
+        //     });
+        // },
 
 
         onVendorVH: function () {
