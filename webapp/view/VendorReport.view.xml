@@ -15,7 +15,7 @@
             <OverflowToolbar id="_IDGenOverflowToolbar">
                 <Title
                     id="_IDGenTitle"
-                    text="Items ({reportModel>/length})"
+                    text="Items ({countModel>/totalItems})"
                 />
                 <ToolbarSpacer id="_IDGenToolbarSpacer" />
                 <Button
@@ -165,7 +165,14 @@
                             <Text
                                 width="120px"
                                 id="_IDGenText133"
-                                text="G/L Account"
+                                text="G/L Account Number"
+                            />
+                        </Column>
+                             <Column id="_IDGenColumn1231">
+                            <Text
+                                width="120px"
+                                id="_IDGenText1331"
+                                text="Bank ProfitCenter"
                             />
                         </Column>
                         <!-- End -->
@@ -188,7 +195,7 @@
                                 
                                     id="_IDGenText39"
                                     text="Amount Proposal"
-                                    state="Success"
+                                    state="Indication05"
                                 />
                         </Column>
                         <Column id="_IDGenColumn381">
@@ -240,13 +247,13 @@
                                 text="PO Posting Date"
                             />
                         </Column>
-                        <Column id="_IDGenColumn19">
+                        <!-- <Column id="_IDGenColumn19">
                             <Text
                                 width="150px"
                                 id="_IDGenText20"
                                 text="G/L Account Number"
                             />
-                        </Column>
+                        </Column> -->
                         <Column id="_IDGenColumn20">
                             <Text
                                 width="150px"
@@ -498,6 +505,10 @@
                                     id="_IDGenText143"
                                     text="{reportModel>GLAccount}"
                                 />
+                                  <Text
+                                    id="_IDGenText1431"
+                                    text="{reportModel>BankProfitCenter}"
+                                />
                                 <!--  -->
                                 <Text
                                     id="_IDGenText78"
@@ -511,14 +522,14 @@
                                     id="_IDGenInput"
                                     value="{reportModel>AmountProposal}"
                                     visible="{= !${reportModel>isTotalRow} }"
-                                    valueState="Success"
+                                    valueState="Information"
                                 />
                                 <Input
                                     id="_IDGenInput1"
                                     value="{reportModel>Rate}"
                                     visible="{= !${reportModel>isTotalRow} }"
                                     editable="{= ${reportModel>TransactionCurrency} !== 'INR' }"
-                                    valueState="Success"
+                                    valueState="Information"
                                 />
                                 <Text
                                     id="_IDGenText56"
@@ -530,16 +541,16 @@
                                 />
                                 <Text
                                     id="_IDGenText58"
-                                    text="{reportModel>AccountingDocument}"
+                                    text="{reportModel>InvoiceDocumentNumber}"
                                 />
                                 <Text
                                     id="_IDGenText59"
-                                    text="{reportModel>AccountingDocumentItem}"
+                                    text="{reportModel>PurchasingHistoryDocumentItem}"
                                 />
                                 <Text
                                     id="_IDGenText60"
                                     text="{
-                                    path: 'reportModel>DocumentDate',
+                                    path: 'reportModel>PoDocumentDate',
                                     type: 'sap.ui.model.type.Date',
                                     formatOptions: {
                                     pattern: 'dd.MM.yyyy'
@@ -549,17 +560,17 @@
                                 <Text
                                     id="_IDGenText61"
                                     text="{
-                                    path: 'reportModel>PostingDate',
+                                    path: 'reportModel>PoPostingDate',
                                     type: 'sap.ui.model.type.Date',
                                     formatOptions: {
                                     pattern: 'dd.MM.yyyy'
                                                 }
                                       }"
                                 />
-                                <Text
+                                <!-- <Text
                                     id="_IDGenText62"
                                     text="{reportModel>GLAccount}"
-                                />
+                                /> -->
                                 <Text
                                     id="_IDGenText63"
                                     text="{reportModel>Material}"
@@ -568,21 +579,21 @@
                                     id="_IDGenText64"
                                     text="{reportModel>MaterialType}"
                                 />
-                                <Text
+                                <!-- <Text
                                     id="_IDGenText65"
                                     text="{reportModel>ActualBilledQuantity}"
-                                />
+                                /> -->
                                 <Text
                                     id="_IDGenText66"
                                     text="{reportModel>PurchaseOrderQuantityUnit}"
                                 />
                                 <Text
                                     id="_IDGenText67"
-                                    text="{reportModel>AmountInLocalCurrency}"
+                                    text="{reportModel>InvoiceValue}"
                                 />
                                 <Text
                                     id="_IDGenText68"
-                                    text="{reportModel>CompanyCodeCurrency}"
+                                    text="{reportModel>Currency}"
                                 />
                                 <Text
                                     id="_IDGenText69"
@@ -590,7 +601,7 @@
                                 />
                                 <Text
                                     id="_IDGenText70"
-                                    text="{reportModel>PurchaseOrderQuantity}"
+                                    text="{reportModel>ActualBilledQuantity}"
                                 />
                                 <Text
                                     id="_IDGenText71"

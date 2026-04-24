@@ -46,6 +46,7 @@ sap.ui.define([
                         if (oParams.msme) {
                                 aFilters.push(new Filter("IndustryType", FilterOperator.EQ, oParams.msme));
                         }
+                        aFilters.push(new sap.ui.model.Filter("IdNo", sap.ui.model.FilterOperator.EQ, ""));
 
                         if (oParams.vendors && oParams.vendors.length > 0) {
                                 var aVendorFilters = oParams.vendors.map(s => new Filter("Supplier", FilterOperator.EQ, s));
@@ -112,6 +113,14 @@ sap.ui.define([
                                         });
 
                                         this.getView().setModel(new JSONModel(aProcessedData), "reportModel");
+
+                                        var iCheckboxCount = aProcessedData.filter(function (item) {
+                                                return item.isTotalRow === false;
+                                        }).length;
+                                        var oCountModel = new sap.ui.model.json.JSONModel({
+                                                totalItems: iCheckboxCount
+                                        });
+                                        this.getView().setModel(oCountModel, "countModel");
                                         oTable.setBusy(false);
                                 }.bind(this),
                                 error: function () {
@@ -122,20 +131,86 @@ sap.ui.define([
                 },
 
                 onSaveReport: function () {
-                        var aData = this.getView().getModel("reportModel").getData();
+                        var oReportModel = this.getView().getModel("reportModel");
+                        var aData = oReportModel.getData();
                         var aToSave = aData.filter(item => !item.isTotalRow && item.isSelected);
 
                         if (aToSave.length === 0) {
-                                MessageToast.show("Please select at least one vendor item.");
+                                 MessageToast.show("Please select at least one vendor item.");
                                 return;
                         }
 
-                        console.log("Proceeding to save:", aToSave);
-                        MessageToast.show("Saving " + aToSave.length + " items...");
+                        var oView = this.getView();
+                        var oModel = oView.getModel();
+                        var oTable = oView.byId("idReportTable");
+                        oView.setBusy(true);
 
-                        //saving logic
+                        oModel.setUseBatch(true);
+                        var sGroupId = "saveProposalGroup1";
+                        aToSave.forEach(function (oData) {
+                                var oPayload = {
+                                        "CompanyCode": oData.CompanyCode,
+                                        "JournalEntry": oData.journalEntry,
+                                        "JournalEntryType": oData.JournalEntryType,
+                                        "Supplier": oData.Supplier,
+                                        "SupplierFullName": oData.SupplierFullName,
+                                        "FiscalYear": oData.FiscalYear,
+                                        "FiscalPeriod": oData.FiscalPeriod,
+                                        "IndustryType": oData.IndustryType,
+                                        "InvoiceDate": oData.InvoiceDate,
+                                        "PostingDate": oData.PostingDate,
+                                        "PaymentDays": oData.Paymentdays,
+                                        "InvoiceNo": oData.invoice_No,
+                                        "InvoiceValue": oData.invoice_Value,
+                                        "HouseBank": oData.HouseBank,
+                                        "HouseBankAccount": oData.HouseBankAccount,
+                                        "GlAccount": oData.GLAccount,
+                                        "BankProfitCenter": oData.BankProfitCenter,
+                                        "AmountAlreadyPaid": oData.AmountAlreadyPaid,
+                                        "BalanceToBePaid": oData.BalanceToBePaid,
+                                        "AmountProposal": oData.AmountProposal,
+                                        "Rate": oData.Rate,
+                                        "ProfitCenter": oData.ProfitCenter,
+                                        "TransactionCurrency": oData.TransactionCurrency,
+                                        "InvoiceDocNumber": oData.InvoiceDocumentNumber,
+                                        "PoHistoryDocItem": oData.PurchasingHistoryDocumentItem,
+                                        "PoDocumentDate": oData.PoDocumentDate,
+                                        "PoPostingDate": oData.PoPostingDate,
+                                        "Material": oData.Material,
+                                        "MaterialType": oData.MaterialType,
+                                        "PoQtyUnit": oData.PurchaseOrderQuantityUnit,
+                                        "InvoiceValuePo": oData.InvoiceValue,
+                                        "Currency": oData.Currency,
+                                        "PurchaseOrder": oData.PurchaseOrder,
+                                        "ActualBilledQty": oData.ActualBilledQuantity,
+                                        "GrnNumber": oData.GRNNumber,
+                                        "Batch": oData.Batch,
+                                        "GrnQuantity": oData.GRNQuantity,
+                                        "ConsumptionQuantity": oData.ConsumptionQuantity,
+                                        "BalanceQuantity": oData.BalanceQuantity,
+                                        "ConsumptionPercentage": oData.ConsumptionPercentage,
+                                        "ProposalStatus": "PENDING"
+                                };
+
+                                oModel.create("/VendorPayment", oPayload, {
+                                        groupId: sGroupId
+                                });
+                        });
+                        oModel.submitChanges({
+                                groupId: sGroupId,
+                                success: function (oData) {
+                                        debugger;
+                                        oView.setBusy(false);
+                                        MessageToast.show("Data saved successfully for " + aToSave.length + " items.");
+                                        oTable.removeSelections();
+                                        window.location.reload();
+                                }.bind(this),
+                                error: function (oError) {
+                                        oView.setBusy(false);
+                                         MessageToast.error("Error occurred while saving data.");
+                                }
+                        });
                 },
-
                 onNavBack: function () {
                         var oHistory = sap.ui.core.routing.History.getInstance();
                         var sPreviousHash = oHistory.getPreviousHash();

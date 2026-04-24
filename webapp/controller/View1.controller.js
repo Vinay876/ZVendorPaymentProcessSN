@@ -199,13 +199,6 @@ sap.ui.define([
                     supportMultiselect: false,
                     key: "HouseBankAccount",
                     descriptionKey: "HouseBankAccountDescription",
-                    // ok: function (oEvent) {
-                    //     var aTokens = oEvent.getParameter("tokens");
-                    //     if (aTokens && aTokens.length > 0) {
-                    //         oView.byId("idAccount").setValue(aTokens[0].getKey());
-                    //     }
-                    //     that._oAccountIDDialog.close();
-                    // },
                     ok: function (oEvent) {
                         var aTokens = oEvent.getParameter("tokens");
                         if (aTokens && aTokens.length > 0) {
@@ -365,75 +358,13 @@ sap.ui.define([
                     } catch (e) {
                         sap.m.MessageBox.error("Error encoding navigation data.");
                     }
-                }.bind(this), // Bahut zaroori hai!
+                }.bind(this), 
                 error: function () {
                     oView.setBusy(false);
                     sap.m.MessageToast.show("Failed to fetch account details.");
                 }
             });
         },
-        // onSubmit: function () {
-        //     var oView = this.getView();
-        //     var oCurrInput = oView.byId("idCurrency");
-        //     var oCompInput = oView.byId("companyCode");
-
-        //     var sCurr = oCurrInput.getValue();
-        //     var sComp = oCompInput.getValue();
-
-        //     if (!sCurr || !sComp) {
-        //         if (!sCurr) oCurrInput.setValueState("Error");
-        //         if (!sComp) oCompInput.setValueState("Error");
-        //         sap.m.MessageToast.show("Please fill in all mandatory fields.");
-        //         return;
-        //     }
-
-        //     oCurrInput.setValueState("None");
-        //     oCompInput.setValueState("None");
-
-        //     var aAccountFilters = [
-        //         new sap.ui.model.Filter("CompanyCode", sap.ui.model.FilterOperator.EQ, sComp),
-        //         new sap.ui.model.Filter("HouseBankAccount", sap.ui.model.FilterOperator.EQ, sAcc)
-        //     ];
-
-        //     oModel.read("/ZCDS_Comp_AccountVH", {
-        //         filters: aAccountFilters,
-        //         success: function (oData) {
-        //             oView.setBusy(false);
-        //             var oAccountInfo = oData.results[0] || {}; // Peh
-
-        //             var sAcc = oView.byId("idAccount").getValue();
-        //             var sRundate = oView.byId("idDate").getValue();
-        //             var aVendors = oView.byId("idVendor").getTokens().map(function (oToken) {
-        //                 return oToken.getKey();
-        //             });
-        //             var aProfitCenters = oView.byId("idProfit").getTokens().map(function (oToken) {
-        //                 return oToken.getKey();
-        //             });
-        //             debugger
-        //             var sMSME = oView.byId("idMSME").getSelectedKey();
-        //             var oData = {
-        //                 company: sComp,
-        //                 account: sAcc,
-        //                 houseBank: oAccountInfo.HouseBank || "", 
-        //                 glAccount: oAccountInfo.GLAccount || "",
-        //                 currency: sCurr,
-        //                 rundate: sRundate,
-        //                 vendors: aVendors,
-        //                 profitCenters: aProfitCenters,
-        //                 msme: sMSME
-        //             };
-        //             try {
-        //                 var sJsonData = JSON.stringify(oData);
-        //                 var sEncodedData = btoa(encodeURIComponent(sJsonData));
-
-        //                 this.getOwnerComponent().getRouter().navTo("RouteVendorReport", {
-        //                     query: sEncodedData
-        //                 });
-        //             } catch (e) {
-        //                 sap.m.MessageBox.error("Error encoding navigation data. Please check your inputs.");
-        //             }
-        //         },
-
         onInputChange: function (oEvent) {
             var oInput = oEvent.getSource();
             if (oInput.getValue()) {
