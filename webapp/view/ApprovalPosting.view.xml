@@ -1,0 +1,108 @@
+<mvc:View
+    controllerName="zf110.controller.ApprovalPosting"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:layout="sap.ui.layout"
+>
+    <Page
+        id="page"
+        title="Approval Posting"
+        backgroundDesign="List"
+    >
+        <content>
+            <VBox
+                id="_IDGenVBox2"
+                class="sapUiSmallMargin"
+            >
+                <layout:Grid
+                    id="_IDGenGrid"
+                    defaultSpan="XL4 L4 M6 S12"
+                    vSpacing="0"
+                >
+                    <VBox id="_IDGenVBox3">
+                        <Label
+                            id="_IDGenLabel7"
+                            text="Select User"
+                            design="Bold"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <RadioButtonGroup
+                            id="idUserRadioGroup"
+                            columns="3"
+                            selectedIndex="0"
+                        >
+                            <buttons>
+                                <RadioButton
+                                    id="rbUser1"
+                                    text="User 1"
+                                />
+                                <RadioButton
+                                    id="rbUser2"
+                                    text="User 2"
+                                />
+                                <RadioButton
+                                    id="rbUser3"
+                                    text="User 3"
+                                />
+                            </buttons>
+                        </RadioButtonGroup>
+                    </VBox>
+
+                    <VBox id="_IDGenVBox4">
+                        <Label
+                            id="_IDGenLabel8"
+                            text="Identification Number"
+                            design="Bold"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <HBox
+                            id="_IDGenHBox1"
+                            alignItems="Center"
+                        >
+                            <Input
+                                id="idIdentificationInput"
+                                placeholder="Enter ID Number..."
+                                width="100%"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                id="idGoButton"
+                                text="Go"
+                                type="Emphasized"
+                                press="onGoPress"
+                                width="80px"
+                            />
+                        </HBox>
+                    </VBox>
+                </layout:Grid>
+            </VBox>
+            <smartTable:SmartTable
+                id="idSmartTable"
+                entitySet="VendorPayment"
+                tableType="Table"
+                beforeRebindTable="onBeforeRebindTable"
+                useVariantManagement="true"
+                useTablePersonalisation="true"
+                header="Vendor Items"
+                showRowCount="true"
+                enableAutoBinding="true"
+                width="100%"
+                height="100%"
+                fitContainer="true"
+                class="sapUiResponsiveContentPadding"
+            >
+                <uiTable:Table
+                    id="_IDGenTable"
+                    xmlns:uiTable="sap.ui.table"
+                    visibleRowCountMode="Auto"
+                    minAutoRowCount="10"
+                    selectionMode="MultiToggle"
+                    rowActionCount="1"
+                />
+            </smartTable:SmartTable>
+        </content>
+    </Page>
+</mvc:View>

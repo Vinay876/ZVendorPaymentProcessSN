@@ -46,7 +46,7 @@ sap.ui.define([
                         if (oParams.msme) {
                                 aFilters.push(new Filter("IndustryType", FilterOperator.EQ, oParams.msme));
                         }
-                        aFilters.push(new sap.ui.model.Filter("IdNo", sap.ui.model.FilterOperator.EQ, ""));
+                        // aFilters.push(new sap.ui.model.Filter("IdNo", sap.ui.model.FilterOperator.EQ, ""));
 
                         if (oParams.vendors && oParams.vendors.length > 0) {
                                 var aVendorFilters = oParams.vendors.map(s => new Filter("Supplier", FilterOperator.EQ, s));
@@ -65,22 +65,111 @@ sap.ui.define([
                                         }));
                                 }
                         }
-
+                        debugger
 
                         oModel.read("/ZFI_VendorOpenReport", {
                                 filters: aFilters,
+                                urlParameters: {
+                                        "$top": 5000
+                                },
+                                // success: function (oData) {
+                                //         var aItems = oData.results;
+                                //         var aProcessedData = [];
+                                //         var mGroups = {};
+
+                                //         var fGrandTotalInvoice = 0;
+                                //         var fGrandTotalBalanceToBePAid = 0;
+                                //         var sFixedHouseBank = oParams.houseBank || "";
+                                //         var sFixedHouseAccount = oParams.account || "";
+                                //         var sFixedGLAccount = oParams.glAccount || "";
+
+                                //         aItems.forEach(function (item) {
+                                //                 if (!mGroups[item.Supplier]) {
+                                //                         mGroups[item.Supplier] = { items: [], total: 0, totalAmountAlreadyPaid: 0, totalbalancetobepaid: 0, totalamountproposal: 0 };
+                                //                 }
+                                //                 var oNewItem = Object.assign({}, item, {
+                                //                         isSelected: false,
+                                //                         isTotalRow: false,
+                                //                         HouseBank: sFixedHouseBank,
+                                //                         HouseBankAccount: sFixedHouseAccount,
+                                //                         GLAccount: sFixedGLAccount
+                                //                 });
+                                //                 mGroups[item.Supplier].items.push(oNewItem);
+
+                                //                 var invVal = parseFloat(item.InvoiceValue || 0);
+                                //                 var paidVal = parseFloat(item.AmountAlreadyPaid || 0);
+                                //                 var balVal = parseFloat(item.BalanceToBePaid || 0);
+                                //                 var propVal = parseFloat(item.AmountProposal || 0);
+                                //                 mGroups[item.Supplier].total += invVal;
+                                //                 mGroups[item.Supplier].totalAmountAlreadyPaid += paidVal;
+                                //                 mGroups[item.Supplier].totalbalancetobepaid += balVal;
+                                //                 mGroups[item.Supplier].totalamountproposal += propVal;
+
+                                //                 fGrandTotalInvoice += invVal;
+                                //                 fGrandTotalBalanceToBePAid += balVal;
+                                //         });
+                                //         Object.keys(mGroups).sort().forEach(function (supplierId) {
+                                //                 var oGroup = mGroups[supplierId];
+                                //                 aProcessedData = aProcessedData.concat(oGroup.items);
+                                //                 aProcessedData.push({
+                                //                         isTotalRow: true,
+                                //                         isSelected: false,
+                                //                         Supplier: supplierId,
+                                //                         CompanyCode: "SUB-TOTAL",
+                                //                         InvoiceValue: oGroup.total.toFixed(2),
+                                //                         AmountAlreadyPaid: oGroup.totalAmountAlreadyPaid.toFixed(2),
+                                //                         BalanceToBePaid: oGroup.totalbalancetobepaid.toFixed(2),
+                                //                         AmountProposal: oGroup.totalamountproposal.toFixed(2),
+                                //                         TransactionCurrency: oGroup.items[0] ? oGroup.items[0].TransactionCurrency : "",
+                                //                         HouseBank: "",
+                                //                         HouseBankAccount: "",
+                                //                         GLAccount: "",
+                                //                         AccountingDocument: "",
+                                //                         FiscalYear: "",
+                                //                         ProfitCenter: ""
+                                //                 });
+                                //         });
+                                //         aProcessedData.push({
+                                //                 isTotalRow: true,
+                                //                 isGrandTotal: true,
+                                //                 Supplier: "GRAND TOTAL",
+                                //                 CompanyCode: "",
+                                //                 InvoiceValue: fGrandTotalInvoice.toFixed(2),
+                                //                 BalanceToBePaid: fGrandTotalBalanceToBePAid.toFixed(2),
+                                //                 TransactionCurrency: aItems[0] ? aItems[0].TransactionCurrency : ""
+                                //         });
+
+                                //         this.getView().setModel(new JSONModel(aProcessedData), "reportModel");
+
+                                //         var iCheckboxCount = aProcessedData.filter(function (item) {
+                                //                 return item.isTotalRow === false;
+                                //         }).length;
+                                //         var oCountModel = new sap.ui.model.json.JSONModel({
+                                //                 totalItems: iCheckboxCount
+                                //         });
+                                //         this.getView().setModel(oCountModel, "countModel");
+                                //         oTable.setBusy(false);
+                                // }.bind(this),
                                 success: function (oData) {
                                         var aItems = oData.results;
                                         var aProcessedData = [];
                                         var mGroups = {};
 
+                                        var fGrandTotalInvoice = 0;
+                                        var fGrandTotalBalanceToBePAid = 0;
                                         var sFixedHouseBank = oParams.houseBank || "";
                                         var sFixedHouseAccount = oParams.account || "";
                                         var sFixedGLAccount = oParams.glAccount || "";
 
                                         aItems.forEach(function (item) {
                                                 if (!mGroups[item.Supplier]) {
-                                                        mGroups[item.Supplier] = { items: [], total: 0 };
+                                                        mGroups[item.Supplier] = {
+                                                                items: [],
+                                                                total: 0,
+                                                                totalAmountAlreadyPaid: 0,
+                                                                totalbalancetobepaid: 0,
+                                                                totalamountproposal: 0
+                                                        };
                                                 }
                                                 var oNewItem = Object.assign({}, item, {
                                                         isSelected: false,
@@ -89,19 +178,68 @@ sap.ui.define([
                                                         HouseBankAccount: sFixedHouseAccount,
                                                         GLAccount: sFixedGLAccount
                                                 });
-                                                // mGroups[item.Supplier].items.push(Object.assign({}, item, { isSelected: false, isTotalRow: false }));
                                                 mGroups[item.Supplier].items.push(oNewItem);
-                                                mGroups[item.Supplier].total += parseFloat(item.AmountInCompanyCodeCurrency || 0);
                                         });
+
+                                        // ─── Deduplication per Supplier group ───────────────────────────────
                                         Object.keys(mGroups).sort().forEach(function (supplierId) {
                                                 var oGroup = mGroups[supplierId];
+
+                                                // Track which RE+JournalEntry combos we've already shown values for
+                                                var mSeenREKeys = {};
+
+                                                oGroup.items.forEach(function (item) {
+                                                        var sKey = item.JournalEntryType + "_" + item.journalEntry;
+                                                        var bIsRE = item.JournalEntryType === "RE";
+
+                                                        if (bIsRE && mSeenREKeys[sKey]) {
+                                                                // ── Duplicate RE row: blank out financial values in display ──
+                                                                item._displayInvoiceValue = "";
+                                                                item._displayAmountAlreadyPaid = "";
+                                                                item._displayBalanceToBePaid = "";
+                                                                item._displayAmountProposal = "";
+                                                                item._isDuplicate = true;
+                                                        } else {
+                                                                // ── First occurrence: show values, accumulate totals ──
+                                                                item._displayInvoiceValue = item.InvoiceValue;
+                                                                item._displayAmountAlreadyPaid = item.AmountAlreadyPaid;
+                                                                item._displayBalanceToBePaid = item.BalanceToBePaid;
+                                                                item._displayAmountProposal = item.AmountProposal;
+                                                                item._isDuplicate = false;
+
+                                                                // Only count unique RE rows (or non-RE rows) in totals
+                                                                var invVal = parseFloat(item.InvoiceValue || 0);
+                                                                var paidVal = parseFloat(item.AmountAlreadyPaid || 0);
+                                                                var balVal = parseFloat(item.BalanceToBePaid || 0);
+                                                                var propVal = parseFloat(item.AmountProposal || 0);
+
+                                                                oGroup.total += invVal;
+                                                                oGroup.totalAmountAlreadyPaid += paidVal;
+                                                                oGroup.totalbalancetobepaid += balVal;
+                                                                oGroup.totalamountproposal += propVal;
+
+                                                                fGrandTotalInvoice += invVal;
+                                                                fGrandTotalBalanceToBePAid += balVal;
+
+                                                                if (bIsRE) {
+                                                                        mSeenREKeys[sKey] = true; // mark as seen AFTER accumulating
+                                                                }
+                                                        }
+                                                });
+
+                                                // Push rows for this supplier
                                                 aProcessedData = aProcessedData.concat(oGroup.items);
+
+                                                // SUB-TOTAL row (uses deduplicated totals)
                                                 aProcessedData.push({
                                                         isTotalRow: true,
                                                         isSelected: false,
                                                         Supplier: supplierId,
                                                         CompanyCode: "SUB-TOTAL",
-                                                        AmountInCompanyCodeCurrency: oGroup.total.toFixed(2),
+                                                        _displayInvoiceValue: oGroup.total.toFixed(2),
+                                                        _displayAmountAlreadyPaid: oGroup.totalAmountAlreadyPaid.toFixed(2),
+                                                        _displayBalanceToBePaid: oGroup.totalbalancetobepaid.toFixed(2),
+                                                        _displayAmountProposal: oGroup.totalamountproposal.toFixed(2),
                                                         TransactionCurrency: oGroup.items[0] ? oGroup.items[0].TransactionCurrency : "",
                                                         HouseBank: "",
                                                         HouseBankAccount: "",
@@ -112,15 +250,27 @@ sap.ui.define([
                                                 });
                                         });
 
+                                        // GRAND TOTAL row (uses deduplicated totals)
+                                        aProcessedData.push({
+                                                isTotalRow: true,
+                                                isGrandTotal: true,
+                                                _groupKey: "ZZZZ",
+                                                Supplier: "GRAND TOTAL",
+                                                CompanyCode: "",
+                                                _displayInvoiceValue: fGrandTotalInvoice.toFixed(2),
+                                                _displayBalanceToBePaid: fGrandTotalBalanceToBePAid.toFixed(2),
+                                                TransactionCurrency: aItems[0] ? aItems[0].TransactionCurrency : ""
+                                        });
+
                                         this.getView().setModel(new JSONModel(aProcessedData), "reportModel");
 
                                         var iCheckboxCount = aProcessedData.filter(function (item) {
                                                 return item.isTotalRow === false;
                                         }).length;
-                                        var oCountModel = new sap.ui.model.json.JSONModel({
-                                                totalItems: iCheckboxCount
-                                        });
-                                        this.getView().setModel(oCountModel, "countModel");
+                                        this.getView().setModel(
+                                                new sap.ui.model.json.JSONModel({ totalItems: iCheckboxCount }),
+                                                "countModel"
+                                        );
                                         oTable.setBusy(false);
                                 }.bind(this),
                                 error: function () {
@@ -136,7 +286,7 @@ sap.ui.define([
                         var aToSave = aData.filter(item => !item.isTotalRow && item.isSelected);
 
                         if (aToSave.length === 0) {
-                                 MessageToast.show("Please select at least one vendor item.");
+                                MessageToast.show("Please select at least one vendor item.");
                                 return;
                         }
 
@@ -207,7 +357,7 @@ sap.ui.define([
                                 }.bind(this),
                                 error: function (oError) {
                                         oView.setBusy(false);
-                                         MessageToast.error("Error occurred while saving data.");
+                                        MessageToast.error("Error occurred while saving data.");
                                 }
                         });
                 },

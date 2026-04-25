@@ -661,6 +661,11 @@ sap.ui.define([
                     sap.m.MessageToast.show("Error fetching vendors.");
                 }
             });
+        },
+        onPostProposal: function (){
+               var oView = this.getView();
+            var oModel = this.getOwnerComponent().getModel();
+             this.getOwnerComponent().getRouter().navTo("RouteApprovalPosting");
         }
 
     });

@@ -111,6 +111,13 @@
           "target": [
             "TargetVendorReport"
           ]
+        },
+        {
+          "name": "RouteApprovalPosting",
+          "pattern": "ApprovalPosting",
+          "target": [
+            "TargetApprovalPosting"
+          ]
         }
       ],
       "targets": {
@@ -121,6 +128,10 @@
         "TargetVendorReport": {
           "id": "VendorReport",
           "name": "VendorReport"
+        },
+        "TargetApprovalPosting": {
+          "id": "ApprovalPosting",
+          "name": "ApprovalPosting"
         }
       }
     },
