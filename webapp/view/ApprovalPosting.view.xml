@@ -3,106 +3,119 @@
     displayBlock="true"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
+    xmlns:f="sap.f"
+    xmlns:fl="sap.ui.layout.form"
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:layout="sap.ui.layout"
+    xmlns:uiTable="sap.ui.table"
+    xmlns:core="sap.ui.core"
+    height="100%"
 >
-    <Page
-        id="page"
-        title="Approval Posting"
-        backgroundDesign="List"
-    >
-        <content>
-            <VBox
-                id="_IDGenVBox2"
-                class="sapUiSmallMargin"
-            >
-                <layout:Grid
-                    id="_IDGenGrid"
-                    defaultSpan="XL4 L4 M6 S12"
-                    vSpacing="0"
-                >
-                    <VBox id="_IDGenVBox3">
-                        <Label
-                            id="_IDGenLabel7"
-                            text="Select User"
-                            design="Bold"
-                            class="sapUiTinyMarginBottom"
-                        />
-                        <RadioButtonGroup
-                            id="idUserRadioGroup"
-                            columns="3"
-                            selectedIndex="0"
-                        >
-                            <buttons>
-                                <RadioButton
-                                    id="rbUser1"
-                                    text="User 1"
-                                />
-                                <RadioButton
-                                    id="rbUser2"
-                                    text="User 2"
-                                />
-                                <RadioButton
-                                    id="rbUser3"
-                                    text="User 3"
-                                />
-                            </buttons>
-                        </RadioButtonGroup>
-                    </VBox>
+    <f:DynamicPage id="idApprovalDynamicPage" headerExpanded="true" showFooter="true" fitContent="true">
+        
+        <f:title>
+            <f:DynamicPageTitle id="_IDGenDynamicPageTitle1">
+                <f:heading>
+                    <Title id="_IDGenTitle1" text="Vendor Payment Approval" />
+                </f:heading>
+                <f:expandedContent>
+                    <Label id="_IDGenLabel11" text="Review and post pending vendor payment proposals" />
+                </f:expandedContent>
+                <f:snappedContent>
+                    <Label id="_IDGenLabel21" text="Review proposals" />
+                </f:snappedContent>
+            </f:DynamicPageTitle>
+        </f:title>
 
-                    <VBox id="_IDGenVBox4">
+        <f:header>
+            <f:DynamicPageHeader id="_IDGenDynamicPageHeader1">
+                <layout:Grid id="_IDGenGrid1" defaultSpan="XL6 L6 M6 S12" vSpacing="0" width="100%">
+                    
+                    <VBox id="_IDGenVBox4" class="sapUiTinyMarginTop">
                         <Label
                             id="_IDGenLabel8"
-                            text="Identification Number"
+                            text="Search Proposal by ID"
                             design="Bold"
                             class="sapUiTinyMarginBottom"
                         />
-                        <HBox
-                            id="_IDGenHBox1"
-                            alignItems="Center"
-                        >
+                        <HBox id="_IDGenHBox1" alignItems="Center" width="100%">
                             <Input
                                 id="idIdentificationInput"
-                                placeholder="Enter ID Number..."
+                                placeholder="Enter ID Number (e.g., 2026000001)..."
                                 width="100%"
                                 class="sapUiSmallMarginEnd"
                             />
                             <Button
                                 id="idGoButton"
-                                text="Go"
+                                text="Search"
+                                icon="sap-icon://search"
                                 type="Emphasized"
                                 press="onGoPress"
-                                width="80px"
+                                width="100px"
                             />
                         </HBox>
                     </VBox>
+
+                    <VBox id="_IDGenVBox3" class="sapUiTinyMarginTop">
+                        <Label
+                            id="_IDGenLabel7"
+                            text="Reviewing User"
+                            design="Bold"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <RadioButtonGroup id="idUserRadioGroup" columns="2" selectedIndex="0">
+                            <buttons>
+                                <RadioButton id="rbUser1" text="Lead Reviewer" />
+                                <RadioButton id="rbUser3" text="Finance VP" />
+                            </buttons>
+                        </RadioButtonGroup>
+                    </VBox>
                 </layout:Grid>
-            </VBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
             <smartTable:SmartTable
                 id="idSmartTable"
                 entitySet="VendorPayment"
                 tableType="Table"
-                beforeRebindTable="onBeforeRebindTable"
-                useVariantManagement="true"
-                useTablePersonalisation="true"
-                header="Vendor Items"
+                header="Pending Vendor Proposals"
                 showRowCount="true"
                 enableAutoBinding="true"
-                width="100%"
-                height="100%"
                 fitContainer="true"
+                width="100%"
                 class="sapUiResponsiveContentPadding"
+                useTablePersonalisation="true"
+                ignoredFields="Approval1,Approval1Status"
+                initiallyVisibleFields="Db_Key,IdNo,CompanyCode,Supplier,SupplierFullName,InvoiceDate,PostingDate,PaymentDays,InvoiceNo,TransactionCurrency,InvoiceValue,AmountAlreadyPaid,BalanceToBePaid,AmountProposal,JournalEntry,JournalEntryType,FiscalYear,FiscalPeriod,HouseBank,HouseBankAccount,GlAccount,ProfitCenter,Material,MaterialType"
             >
                 <uiTable:Table
                     id="_IDGenTable"
-                    xmlns:uiTable="sap.ui.table"
-                    visibleRowCountMode="Auto"
-                    minAutoRowCount="10"
                     selectionMode="MultiToggle"
-                    rowActionCount="1"
-                />
+                    width="100%"
+                >
+                    <uiTable:columns>
+                    </uiTable:columns>
+                </uiTable:Table>
             </smartTable:SmartTable>
-        </content>
-    </Page>
+        </f:content>
+
+        <f:footer>
+            <OverflowToolbar id="_IDGenOverflowToolbar1">
+                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                <Button 
+                    id="idApproveBtn" 
+                    text="Approve Proposal" 
+                    icon="sap-icon://accept" 
+                    type="Accept" 
+                    press="onApprovePress" />
+                <Button 
+                    id="idDeleteBtn" 
+                    text="Reject Proposal" 
+                    icon="sap-icon://decline" 
+                    type="Reject" 
+                    press="onDeletePress" />
+            </OverflowToolbar>
+        </f:footer>
+    </f:DynamicPage>
 </mvc:View>

@@ -336,7 +336,6 @@ sap.ui.define([
                     });
 
                     var sMSME = oView.byId("idMSME").getSelectedKey();
-                    debugger
                     var oNavigationData = {
                         company: sComp,
                         account: sAcc,
@@ -358,7 +357,7 @@ sap.ui.define([
                     } catch (e) {
                         sap.m.MessageBox.error("Error encoding navigation data.");
                     }
-                }.bind(this), 
+                }.bind(this),
                 error: function () {
                     oView.setBusy(false);
                     sap.m.MessageToast.show("Failed to fetch account details.");
@@ -552,15 +551,9 @@ sap.ui.define([
                 },
                 success: function (oData) {
                     var aItems = oData.results;
-                    var aUniqueItems = aItems.filter(function (vItem, iIndex, aArray) {
-                        return aArray.findIndex(function (vSearch) {
-                            return vSearch.Supplier === vItem.Supplier;
-                        }) === iIndex;
-                    });
                     var oLocalModel = new sap.ui.model.json.JSONModel({
-                        results: aUniqueItems
+                        results: aItems
                     });
-
                     oTable.setModel(oLocalModel);
                     oTable.bindRows("/results");
 
@@ -662,10 +655,10 @@ sap.ui.define([
                 }
             });
         },
-        onPostProposal: function (){
-               var oView = this.getView();
+        onPostProposal: function () {
+            var oView = this.getView();
             var oModel = this.getOwnerComponent().getModel();
-             this.getOwnerComponent().getRouter().navTo("RouteApprovalPosting");
+            this.getOwnerComponent().getRouter().navTo("RouteApprovalPosting");
         }
 
     });

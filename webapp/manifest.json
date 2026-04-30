@@ -34,6 +34,20 @@
           "odataVersion": "2.0"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "zf110-Display": {
+          "semanticObject": "zf110",
+          "action": "Display",
+          "title": "{{zf110-Display.flpTitle}}",
+          "subTitle": "{{zf110-Display.flpSubtitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.ui": {
@@ -54,6 +68,9 @@
   },
   "sap.ui5": {
     "flexEnabled": true,
+    "config": {
+        "fullWidth": true
+    },
     "dependencies": {
       "minUI5Version": "1.142.10",
       "libs": {

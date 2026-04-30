@@ -286,13 +286,13 @@
                                 text="Material Type"
                             />
                         </Column>
-                        <Column id="_IDGenColumn22">
+                        <!-- <Column id="_IDGenColumn22">
                             <Text
                                 width="150px"
                                 id="_IDGenText23"
                                 text="Actual Billed Quantity"
                             />
-                        </Column>
+                        </Column> -->
                         <Column id="_IDGenColumn23">
                             <Text
                                 width="100px"
