@@ -25,6 +25,10 @@ sap.ui.define([
                         }
                 },
 
+                formatRowClass: function (bIsTotalRow) {
+                        debugger;
+                        return bIsTotalRow ? "background" : "";
+                },
                 _loadReportData: function (oParams) {
                         var oModel = this.getOwnerComponent().getModel();
                         var oTable = this.byId("idReportTable");
@@ -64,7 +68,7 @@ sap.ui.define([
                                                 and: false
                                         }));
                                 }
-                        }      
+                        }
 
                         oModel.read("/ZFI_VendorOpenReport", {
                                 filters: aFilters,
@@ -148,7 +152,8 @@ sap.ui.define([
                                                         isTotalRow: true,
                                                         isSelected: false,
                                                         Supplier: supplierId,
-                                                        CompanyCode: "SUB-TOTAL",
+                                                        // rowClass: "lightYellowSubtotal",
+                                                        CompanyCode: "SUB TOTAL",
                                                         _displayInvoiceValue: oGroup.total.toFixed(2),
                                                         _displayAmountAlreadyPaid: oGroup.totalAmountAlreadyPaid.toFixed(2),
                                                         _displayBalanceToBePaid: oGroup.totalbalancetobepaid.toFixed(2),

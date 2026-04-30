@@ -558,7 +558,7 @@ sap.ui.define([
                     oTable.bindRows("/results");
 
                     that._oVendorDialog.update();
-                    that._oVendorDialog.setTitle("Vendor (" + aUniqueItems.length + ")");
+                    that._oVendorDialog.setTitle("Vendor (" + oData.length + ")");
                     oTable.setBusy(false);
                 },
                 error: function () {

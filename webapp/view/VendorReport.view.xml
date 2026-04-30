@@ -161,7 +161,7 @@
                                 text="Invoice Value"
                             />
                         </Column>
-                         <Column id="_IDGenColumn35">
+                        <Column id="_IDGenColumn35">
                             <Text
                                 width="140px"
                                 id="_IDGenText36"
@@ -222,7 +222,7 @@
                             />
                         </Column>
                         <!-- End -->
-                       
+
                         <Column id="_IDGenColumn13">
                             <Text
                                 width="100px"
@@ -333,7 +333,7 @@
                         </Column>
                         <Column id="_IDGenColumn28">
                             <Text
-                                width="100px"
+                                width="140px"
                                 id="_IDGenText29"
                                 text="Price"
                             />
@@ -432,6 +432,13 @@
                             vAlign="Middle"
                             highlight="{= ${reportModel>isTotalRow} ? 'Information' : 'None'}"
                         >
+                            <customData>
+                                <core:CustomData
+                                    key="type"
+                                    value="{= ${reportModel>Supplier} === 'GRAND TOTAL' ? 'grand' : 'total' }"
+                                    writeToDom="{= ${reportModel>CompanyCode} === 'SUB TOTAL' || ${reportModel>Supplier} === 'GRAND TOTAL' }"
+                                />
+                            </customData>
                             <cells>
                                 <CheckBox
                                     id="_IDGenCheckBox"
@@ -514,7 +521,7 @@
                                     id="_IDGenObjectNumber"
                                     number="{reportModel>_displayInvoiceValue}"
                                 />
-                                  <!-- <Text
+                                <!-- <Text
                                     id="_IDGenText78"
                                     text="{reportModel>AmountAlreadyPaid}"
                                 /> -->
@@ -567,7 +574,7 @@
                                     text="{reportModel>BankProfitCenter}"
                                 />
                                 <!--  -->
-                               <Text
+                                <Text
                                     id="_IDGenText56"
                                     text="{reportModel>ProfitCenter}"
                                 />
@@ -621,7 +628,7 @@
                                 /> -->
                                 <Text
                                     id="_IDGenText66"
-                                    text="{reportModel>PurchaseOrderQuantityUnit}"
+                                    text="{reportModel>BaseUnit}"
                                 />
                                 <Text
                                     id="_IDGenText67"
@@ -641,7 +648,7 @@
                                 />
                                 <Text
                                     id="_IDGenText71"
-                                    text="{reportModel>NetPriceAmount}"
+                                    text="{reportModel>Price}"
                                 />
                                 <Text
                                     id="_IDGenText73"
@@ -657,17 +664,17 @@
                                 />
                                 <Text
                                     id="_IDGenText76"
-                                    text="{reportModel>ConsumptionQuantity}"
+                                    text="{reportModel>ConsumptionQty}"
                                 />
                                 <Text
                                     id="_IDGenText77"
-                                    text="{reportModel>BalanceQuantity}"
+                                    text="{reportModel>BalancedQty}"
                                 />
                                 <!-- <Text id="_IDGenText78" text="{reportModel>AmountAlreadyPaid}" />
                                 <Text id="_IDGenText79" text="{reportModel>BalanceToBePaid}" /> -->
                                 <Text
                                     id="_IDGenText80"
-                                    text="{reportModel>ConsumptionPercentage}"
+                                    text="{reportModel>ConsumptionPercent}"
                                 />
                                 <!-- <Input id="_IDGenInput" value="{reportModel>AmountProposal}" visible="{= !${reportModel>isTotalRow} }" /> -->
                                 <Text
