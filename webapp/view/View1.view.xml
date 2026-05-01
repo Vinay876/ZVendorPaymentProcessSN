@@ -26,10 +26,10 @@
                         press="onCreateNew"
                     />
                     <Button
-                        id="_IDGenButton1"
-                        text="Post Approved Proposal"
+                        id="idPostInvoiceButton"
+                        text="Invoice Posting"
                         class="sapUiTinyMarginBegin"
-                        press="onPostProposal"
+                        press="onInvoicePosting"
                     />
                     <Button
                         id="_IDGenButton2"

@@ -1,10 +1,4 @@
-/* tr[data-type="total"] .sapMListTblCell {
-    background-color: #ffff00 !important;
-}
-tr[data-type="grand"] .sapMListTblCell {
-    background-color: #ff0000 !important;
-    color: white !important; 
-} */
+
 tr[data-type="total"] .sapMListTblCell {
     background-color: #f1ef40c0 !important; 
     border-bottom: 1px solid #f1ef40c0 !important;
@@ -20,4 +14,7 @@ tr[data-type="grand"] .sapMListTblCell {
 tr[data-type="grand"] .sapMListTblCell .sapMText {
     font-weight: bold !important;
     color: #030303 !important;
+}
+tr[data-type="total"] .sapMListTblCell .sapMText {
+    font-weight: bold !important;
 }

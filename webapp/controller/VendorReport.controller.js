@@ -3,7 +3,8 @@ sap.ui.define([
         "sap/ui/model/json/JSONModel",
         "sap/ui/model/Filter",
         "sap/ui/model/FilterOperator",
-        "sap/m/MessageToast"
+        "sap/m/MessageToast",
+        "sap/m/MessageBox",
 ], function (Controller, JSONModel, Filter, FilterOperator, MessageToast) {
         "use strict";
 
@@ -179,6 +180,9 @@ sap.ui.define([
                                                 TransactionCurrency: aItems[0] ? aItems[0].TransactionCurrency : ""
                                         });
 
+                                        // for edit/nonedit
+                                        aProcessedData = this._processSupplierEditableLogic(aProcessedData, mGroups);
+
                                         this.getView().setModel(new JSONModel(aProcessedData), "reportModel");
 
                                         var iCheckboxCount = aProcessedData.filter(function (item) {
@@ -196,84 +200,255 @@ sap.ui.define([
                                 }
                         });
                 },
+                _processSupplierEditableLogic: function (aProcessedData, mGroups) {
+                        aProcessedData.forEach(function (oRow) {
+                                if (!oRow.isTotalRow) {
+                                        var oGroup = mGroups[oRow.Supplier];
+                                        if (oGroup) {
+                                                oRow.supplierSubtotal = oGroup.total;
+                                                if (oRow.SpecialGLCode === 'F') {
+                                                        oRow.isProposalEditable = true;
+                                                } else {
+                                                        var fLineVal = parseFloat(oRow._displayInvoiceValue || 0);
+                                                        var fGroupTotal = oGroup.total;
 
+                                                        if (fGroupTotal > 0 || fLineVal > 0) {
+                                                                oRow.isProposalEditable = false;
+                                                        } else {
+                                                                oRow.isProposalEditable = true;
+                                                        }
+                                                }
+                                        }
+                                } else {
+                                        oRow.isProposalEditable = false;
+                                }
+                        });
+
+                        return aProcessedData;
+                },
+                // onSaveReport: function () {
+                //         var oReportModel = this.getView().getModel("reportModel");
+                //         var aData = oReportModel.getData();
+                //         var aToSave = aData.filter(item => !item.isTotalRow && item.isSelected);
+
+                //         if (aToSave.length === 0) {
+                //                 MessageToast.show("Please select at least one vendor item.");
+                //                 return;
+                //         }
+
+                //         var oView = this.getView();
+                //         var oModel = oView.getModel();
+                //         var oTable = oView.byId("idReportTable");
+                //         oView.setBusy(true);
+
+                //         oModel.setUseBatch(true);
+                //         var sGroupId = "saveProposalGroup1";
+                //         aToSave.forEach(function (oData) {
+                //                 var oPayload = {
+                //                         "CompanyCode": oData.CompanyCode,
+                //                         "JournalEntry": oData.journalEntry,
+                //                         "JournalEntryType": oData.JournalEntryType,
+                //                         "Supplier": oData.Supplier,
+                //                         "SupplierFullName": oData.SupplierFullName,
+                //                         "FiscalYear": oData.FiscalYear,
+                //                         "FiscalPeriod": oData.FiscalPeriod,
+                //                         "IndustryType": oData.IndustryType,
+                //                         "InvoiceDate": oData.InvoiceDate,
+                //                         "PostingDate": oData.PostingDate,
+                //                         "PaymentDays": oData.Paymentdays,
+                //                         "InvoiceNo": oData.invoice_No,
+                //                         "InvoiceValue": oData.invoiceValue,
+                //                         "AmountAlreadyPaid": oData.AmountAlreadyPaid,
+                //                         "BalanceToBePaid": oData.BalanceToBePaid,
+                //                         "AmountProposal": oData.AmountProposal,
+                //                         "Rate": oData.Rate,
+                //                         "HouseBank": oData.HouseBank,
+                //                         "HouseBankAccount": oData.HouseBankAccount,
+                //                         "GlAccount": oData.GLAccount,
+                //                         "BankProfitCenter": oData.BankProfitCenter,
+                //                         "ProfitCenter": oData.ProfitCenter,
+                //                         "TransactionCurrency": oData.TransactionCurrency,
+                //                         "InvoiceDocNumber": oData.InvoiceDocumentNumber,
+                //                         "PoHistoryDocItem": oData.PurchasingHistoryDocumentItem,
+                //                         "PoDocumentDate": oData.PoDocumentDate,
+                //                         "PoPostingDate": oData.PoPostingDate,
+                //                         "Material": oData.Material,
+                //                         "MaterialType": oData.MaterialType,
+                //                         "PoQtyUnit": oData.BaseUnit,
+                //                         "Currency": oData.Currency,
+                //                         "PurchaseOrder": oData.PurchaseOrder,
+                //                         "ActualBilledQty": oData.ActualBilledQuantity,
+                //                         "GrnNumber": oData.GRNNumber,
+                //                         "Batch": oData.Batch,
+                //                         "GrnQuantity": oData.GRNQuantity,
+                //                         "ConsumptionQuantity": oData.ConsumptionQuantity,
+                //                         "BalanceQuantity": oData.BalanceQuantity,
+                //                         "ConsumptionPercentage": oData.ConsumptionPercentage,
+                //                         "ProposalStatus": "PENDING"
+                //                 };
+
+                //                 oModel.create("/VendorPayment", oPayload, {
+                //                         groupId: sGroupId
+                //                 });
+                //         });
+                //         oModel.submitChanges({
+                //                 groupId: sGroupId,
+                //                 success: function (oData) {
+                //                         oView.setBusy(false);
+                //                         MessageToast.show("Data saved successfully for " + aToSave.length + " items.");
+                //                         oTable.removeSelections();
+                //                         window.location.reload();
+                //                 }.bind(this),
+                //                 error: function (oError) {
+                //                         oView.setBusy(false);
+                //                         MessageToast.error("Error occurred while saving data.");
+                //                 }
+                //         });
+                // },
                 onSaveReport: function () {
                         var oReportModel = this.getView().getModel("reportModel");
                         var aData = oReportModel.getData();
+
+                        // 1. Only look at selected lines that are not subtotal rows
                         var aToSave = aData.filter(item => !item.isTotalRow && item.isSelected);
 
                         if (aToSave.length === 0) {
-                                MessageToast.show("Please select at least one vendor item.");
+                                sap.m.MessageToast.show("Please select at least one vendor item.");
                                 return;
                         }
 
+                        var aErrorMessages = [];
+
+                        aToSave.forEach(function (oData) {
+                                var fInvoiceValue = parseFloat(oData._displayInvoiceValue) || 0;
+                                var fAmountProposal = parseFloat(oData._displayAmountProposal) || 0;
+                                var sJournalEntry = oData.journalEntry || "Unknown";
+
+                                var fAbsInvoiceValue = Math.abs(fInvoiceValue);
+                                var fAbsAmountProposal = Math.abs(fAmountProposal);
+                                var aLineErrors = [];
+
+                                if (fAmountProposal <= 0) {
+                                        aLineErrors.push("Proposal Amount cannot be zero or empty.");
+                                }
+
+                                if (fAbsAmountProposal > fAbsInvoiceValue) {
+                                        aLineErrors.push("Proposal Amount (" + fAbsAmountProposal + ") exceeds Invoice Amount (" + fAbsInvoiceValue + ").");
+                                }
+                                if (aLineErrors.length > 0) {
+                                        aErrorMessages.push("Journal Entry " + sJournalEntry + ": " + aLineErrors.join(" "));
+                                }
+                        });
+                        if (aErrorMessages.length > 0) {
+                                var sFinalError = aErrorMessages.join("\n");
+                                sap.m.MessageBox.error("Please correct the following errors before saving:\n\n" + sFinalError);
+                                return; 
+                        }
                         var oView = this.getView();
                         var oModel = oView.getModel();
-                        var oTable = oView.byId("idReportTable");
                         oView.setBusy(true);
 
                         oModel.setUseBatch(true);
                         var sGroupId = "saveProposalGroup1";
-                        aToSave.forEach(function (oData) {
-                                var oPayload = {
-                                        "CompanyCode": oData.CompanyCode,
-                                        "JournalEntry": oData.journalEntry,
-                                        "JournalEntryType": oData.JournalEntryType,
-                                        "Supplier": oData.Supplier,
-                                        "SupplierFullName": oData.SupplierFullName,
-                                        "FiscalYear": oData.FiscalYear,
-                                        "FiscalPeriod": oData.FiscalPeriod,
-                                        "IndustryType": oData.IndustryType,
-                                        "InvoiceDate": oData.InvoiceDate,
-                                        "PostingDate": oData.PostingDate,
-                                        "PaymentDays": oData.Paymentdays,
-                                        "InvoiceNo": oData.invoice_No,
-                                        "InvoiceValue": oData.invoice_Value,
-                                        "HouseBank": oData.HouseBank,
-                                        "HouseBankAccount": oData.HouseBankAccount,
-                                        "GlAccount": oData.GLAccount,
-                                        "BankProfitCenter": oData.BankProfitCenter,
-                                        "AmountAlreadyPaid": oData.AmountAlreadyPaid,
-                                        "BalanceToBePaid": oData.BalanceToBePaid,
-                                        "AmountProposal": oData.AmountProposal,
-                                        "Rate": oData.Rate,
-                                        "ProfitCenter": oData.ProfitCenter,
-                                        "TransactionCurrency": oData.TransactionCurrency,
-                                        "InvoiceDocNumber": oData.InvoiceDocumentNumber,
-                                        "PoHistoryDocItem": oData.PurchasingHistoryDocumentItem,
-                                        "PoDocumentDate": oData.PoDocumentDate,
-                                        "PoPostingDate": oData.PoPostingDate,
-                                        "Material": oData.Material,
-                                        "MaterialType": oData.MaterialType,
-                                        "PoQtyUnit": oData.PurchaseOrderQuantityUnit,
-                                        "InvoiceValuePo": oData.InvoiceValue,
-                                        "Currency": oData.Currency,
-                                        "PurchaseOrder": oData.PurchaseOrder,
-                                        "ActualBilledQty": oData.ActualBilledQuantity,
-                                        "GrnNumber": oData.GRNNumber,
-                                        "Batch": oData.Batch,
-                                        "GrnQuantity": oData.GRNQuantity,
-                                        "ConsumptionQuantity": oData.ConsumptionQuantity,
-                                        "BalanceQuantity": oData.BalanceQuantity,
-                                        "ConsumptionPercentage": oData.ConsumptionPercentage,
-                                        "ProposalStatus": "PENDING"
-                                };
 
-                                oModel.create("/VendorPayment", oPayload, {
+                        aToSave.forEach(function (oData) {
+                                 var oPayload = {
+
+                                        "CompanyCode": oData.CompanyCode,
+
+                                        "JournalEntry": oData.journalEntry,
+
+                                        "JournalEntryType": oData.JournalEntryType,
+
+                                        "Supplier": oData.Supplier,
+
+                                        "SupplierFullName": oData.SupplierFullName,
+
+                                        "FiscalYear": oData.FiscalYear,
+
+                                        "FiscalPeriod": oData.FiscalPeriod,
+
+                                        "IndustryType": oData.IndustryType,
+
+                                        "InvoiceDate": oData.InvoiceDate,
+
+                                        "PostingDate": oData.PostingDate,
+
+                                        "PaymentDays": oData.Paymentdays,
+
+                                        "InvoiceNo": oData.invoice_No,
+
+                                        "InvoiceValue": oData.invoiceValue,
+
+                                        "AmountAlreadyPaid": oData.AmountAlreadyPaid,
+
+                                        "BalanceToBePaid": oData.BalanceToBePaid,
+
+                                        "AmountProposal": oData.AmountProposal,
+
+                                        "Rate": oData.Rate,
+
+                                        "HouseBank": oData.HouseBank,
+
+                                        "HouseBankAccount": oData.HouseBankAccount,
+
+                                        "GlAccount": oData.GLAccount,
+
+                                        "BankProfitCenter": oData.BankProfitCenter,
+
+                                        "ProfitCenter": oData.ProfitCenter,
+
+                                        "TransactionCurrency": oData.TransactionCurrency,
+
+                                        "InvoiceDocNumber": oData.InvoiceDocumentNumber,
+
+                                        "PoHistoryDocItem": oData.PurchasingHistoryDocumentItem,
+
+                                        "PoDocumentDate": oData.PoDocumentDate,
+
+                                        "PoPostingDate": oData.PoPostingDate,
+
+                                        "Material": oData.Material,
+
+                                        "MaterialType": oData.MaterialType,
+
+                                        "PoQtyUnit": oData.BaseUnit,
+
+                                        "Currency": oData.Currency,
+
+                                        "PurchaseOrder": oData.PurchaseOrder,
+
+                                        "ActualBilledQty": oData.ActualBilledQuantity,
+
+                                        "GrnNumber": oData.GRNNumber,
+
+                                        "Batch": oData.Batch,
+
+                                        "GrnQuantity": oData.GRNQuantity,
+
+                                        "ConsumptionQuantity": oData.ConsumptionQuantity,
+
+                                        "BalanceQuantity": oData.BalanceQuantity,
+
+                                        "ConsumptionPercentage": oData.ConsumptionPercentage,
+
+                                        "ProposalStatus": "PENDING"
+
+                                };
+                                oModel.create("/YourEntitySet", oPayload, {
                                         groupId: sGroupId
                                 });
                         });
+
                         oModel.submitChanges({
                                 groupId: sGroupId,
-                                success: function (oData) {
+                                success: function () {
                                         oView.setBusy(false);
-                                        MessageToast.show("Data saved successfully for " + aToSave.length + " items.");
-                                        oTable.removeSelections();
-                                        window.location.reload();
-                                }.bind(this),
-                                error: function (oError) {
+                                        sap.m.MessageToast.show("Selected proposals saved successfully!");
+                                },
+                                error: function () {
                                         oView.setBusy(false);
-                                        MessageToast.error("Error occurred while saving data.");
+                                        sap.m.MessageBox.error("An error occurred while saving.");
                                 }
                         });
                 },

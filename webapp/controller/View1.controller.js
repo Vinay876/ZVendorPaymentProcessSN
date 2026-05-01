@@ -659,6 +659,11 @@ sap.ui.define([
             var oView = this.getView();
             var oModel = this.getOwnerComponent().getModel();
             this.getOwnerComponent().getRouter().navTo("RouteApprovalPosting");
+        },
+        onInvoicePosting:function () {
+            var oView = this.getView();
+            var oModel = this.getOwnerComponent().getModel();
+            this.getOwnerComponent().getRouter().navTo("RouteInvoicePosting");
         }
 
     });

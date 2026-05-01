@@ -1,0 +1,114 @@
+<mvc:View
+    controllerName="zf110.controller.InvoicePosting"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fl="sap.ui.layout.form"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:layout="sap.ui.layout"
+    xmlns:uiTable="sap.ui.table"
+    xmlns:core="sap.ui.core"
+    height="100%"
+>
+    <f:DynamicPage
+        id="idPostingDynamicPage"
+        headerExpanded="true"
+        showFooter="true"
+        fitContent="true"
+    >
+        <f:title>
+            <f:DynamicPageTitle id="idPostingTitle">
+                <f:heading>
+                    <Title
+                        id="_IDGenTitle3"
+                        text="Invoice Posting &amp; Clearing"
+                    />
+                </f:heading>
+
+                <!-- Header Actions: Post and Clearing Buttons -->
+                <f:actions>
+                    <Button
+                        id="idPostBtn"
+                        text="Post"
+                        type="Emphasized"
+                        icon="sap-icon://post"
+                        press="onPostPress"
+                    />
+                    <Button
+                        id="idClearingBtn"
+                        text="Clearing"
+                        type="Default"
+                        icon="sap-icon://money-bills"
+                        press="onClearingPress"
+                    />
+                </f:actions>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader id="_IDGenDynamicPageHeader">
+                <layout:Grid
+                    id="_IDGenGrid"
+                    defaultSpan="XL6 L6 M6 S12"
+                    vSpacing="0"
+                    width="100%"
+                >
+                    <VBox
+                        id="_IDGenVBox2"
+                        class="sapUiTinyMarginTop"
+                    >
+                        <Label
+                            id="_IDGenLabel9"
+                            text="Search Approved Proposals"
+                            design="Bold"
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <HBox
+                            id="_IDGenHBox3"
+                            alignItems="Center"
+                            width="100%"
+                        >
+                            <Input
+                                id="idIdentificationInput1"
+                                placeholder="Enter ID Number..."
+                                width="100%"
+                                class="sapUiSmallMarginEnd"
+                            />
+                            <Button
+                                id="_IDGenButton5"
+                                text="Search"
+                                icon="sap-icon://search"
+                                type="Emphasized"
+                                press="onGoPress"
+                                width="100px"
+                            />
+                        </HBox>
+                    </VBox>
+                </layout:Grid>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <smartTable:SmartTable
+                id="idPostingSmartTable"
+                entitySet="VendorPayment"
+                tableType="Table"
+                header="Approved Invoices for Posting"
+                showRowCount="true"
+                enableAutoBinding="true"
+                fitContainer="true"
+                width="100%"
+                useTablePersonalisation="true"
+                initialise="onSmartTableInit"
+                beforeRebindTable="onBeforeRebindTable"
+                initiallyVisibleFields="Db_Key,IdNo,CompanyCode,Supplier,InvoiceNo,TransactionCurrency,InvoiceValue,BalanceToBePaid,AmountProposal"
+            >
+                <uiTable:Table
+                    id="_IDGenTable1"
+                    selectionMode="MultiToggle"
+                />
+            </smartTable:SmartTable>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

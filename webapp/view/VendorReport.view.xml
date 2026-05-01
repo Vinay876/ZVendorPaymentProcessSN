@@ -35,21 +35,6 @@
                 height="100%"
                 width="100%"
             >
-                <!-- <Table
-                    id="idReportTable"
-                    fixedLayout="false"
-                    growing="true"
-                    growingThreshold="50"
-                    growingScrollToLoad="true"
-                    sticky="ColumnHeaders,HeaderToolbar"
-                    items="{
-                        path: 'reportModel>/',
-                        sorter: {
-                            path: 'Supplier',
-                            group: true
-                        }
-                    }"
-                > -->
                 <Table
                     id="idReportTable"
                     fixedLayout="false"
@@ -192,7 +177,6 @@
                                 text="Rate"
                             />
                         </Column>
-                        <!-- new added -->
                         <Column id="_IDGenColumn121">
                             <Text
                                 width="120px"
@@ -221,8 +205,6 @@
                                 text="Bank ProfitCenter"
                             />
                         </Column>
-                        <!-- End -->
-
                         <Column id="_IDGenColumn13">
                             <Text
                                 width="100px"
@@ -265,13 +247,7 @@
                                 text="PO Posting Date"
                             />
                         </Column>
-                        <!-- <Column id="_IDGenColumn19">
-                            <Text
-                                width="150px"
-                                id="_IDGenText20"
-                                text="G/L Account Number"
-                            />
-                        </Column> -->
+
                         <Column id="_IDGenColumn20">
                             <Text
                                 width="150px"
@@ -286,13 +262,7 @@
                                 text="Material Type"
                             />
                         </Column>
-                        <!-- <Column id="_IDGenColumn22">
-                            <Text
-                                width="150px"
-                                id="_IDGenText23"
-                                text="Actual Billed Quantity"
-                            />
-                        </Column> -->
+
                         <Column id="_IDGenColumn23">
                             <Text
                                 width="100px"
@@ -300,16 +270,7 @@
                                 text="PO (UOM)"
                             />
                         </Column>
-                        <Column
-                            id="_IDGenColumn24"
-                            hAlign="End"
-                        >
-                            <Text
-                                width="160px"
-                                id="_IDGenText25"
-                                text="Amount in Local Currency"
-                            />
-                        </Column>
+
                         <Column id="_IDGenColumn25">
                             <Text
                                 width="100px"
@@ -479,10 +440,6 @@
                                     id="_IDGenText51"
                                     text="{reportModel>IndustryType}"
                                 />
-                                <!-- <Text
-                                    id="_IDGenText52"
-                                    text="{reportModel>DocumentDate}"
-                                /> -->
 
                                 <Text
                                     id="_IDGenText52"
@@ -494,7 +451,7 @@
                                                 }
                                       }"
                                 />
-                                <!-- <Text id="_IDGenText53" text="{reportModel>PostingDate}" /> -->
+
                                 <Text
                                     id="_IDGenText53"
                                     text="{
@@ -513,42 +470,30 @@
                                     id="_IDGenText55"
                                     text="{reportModel>invoice_No}"
                                 />
-                                <!-- <ObjectNumber
-                                    id="_IDGenObjectNumber"
-                                    number="{reportModel>InvoiceValue}"
-                                /> -->
+
                                 <ObjectNumber
                                     id="_IDGenObjectNumber"
                                     number="{reportModel>_displayInvoiceValue}"
                                 />
-                                <!-- <Text
-                                    id="_IDGenText78"
-                                    text="{reportModel>AmountAlreadyPaid}"
-                                /> -->
+
                                 <Text
                                     id="_IDGenText78"
                                     text="{reportModel>_displayAmountAlreadyPaid}"
                                 />
-                                <!-- <Text
-                                    id="_IDGenText79"
-                                    text="{reportModel>BalanceToBePaid}"
-                                /> -->
+
                                 <Text
                                     id="_IDGenText79"
                                     text="{reportModel>_displayBalanceToBePaid}"
                                 />
-                                <!-- <Input
-                                    id="_IDGenInput"
-                                    value="{reportModel>AmountProposal}"
-                                    visible="{= !${reportModel>isTotalRow} }"
-                                    valueState="Information"
-                                /> -->
+
                                 <Input
                                     id="_IDGenInput"
                                     value="{reportModel>_displayAmountProposal}"
                                     visible="{= !${reportModel>isTotalRow} }"
                                     valueState="Information"
+                                    editable="{reportModel>isProposalEditable}"
                                 />
+
                                 <Input
                                     id="_IDGenInput1"
                                     value="{reportModel>Rate}"
@@ -556,7 +501,7 @@
                                     editable="{= ${reportModel>TransactionCurrency} !== 'INR' }"
                                     valueState="Information"
                                 />
-                                <!-- items added -->
+
                                 <Text
                                     id="_IDGenText141"
                                     text="{reportModel>HouseBank}"
@@ -610,10 +555,7 @@
                                                 }
                                       }"
                                 />
-                                <!-- <Text
-                                    id="_IDGenText62"
-                                    text="{reportModel>GLAccount}"
-                                /> -->
+
                                 <Text
                                     id="_IDGenText63"
                                     text="{reportModel>Material}"
@@ -622,18 +564,12 @@
                                     id="_IDGenText64"
                                     text="{reportModel>MaterialType}"
                                 />
-                                <!-- <Text
-                                    id="_IDGenText65"
-                                    text="{reportModel>ActualBilledQuantity}"
-                                /> -->
+
                                 <Text
                                     id="_IDGenText66"
                                     text="{reportModel>BaseUnit}"
                                 />
-                                <Text
-                                    id="_IDGenText67"
-                                    text="{reportModel>Invoice_Value}"
-                                />
+
                                 <Text
                                     id="_IDGenText68"
                                     text="{reportModel>Currency}"
@@ -670,13 +606,10 @@
                                     id="_IDGenText77"
                                     text="{reportModel>BalancedQty}"
                                 />
-                                <!-- <Text id="_IDGenText78" text="{reportModel>AmountAlreadyPaid}" />
-                                <Text id="_IDGenText79" text="{reportModel>BalanceToBePaid}" /> -->
                                 <Text
                                     id="_IDGenText80"
                                     text="{reportModel>ConsumptionPercent}"
                                 />
-                                <!-- <Input id="_IDGenInput" value="{reportModel>AmountProposal}" visible="{= !${reportModel>isTotalRow} }" /> -->
                                 <Text
                                     id="_IDGenText81"
                                     text="{reportModel>ProposalStatus}"
