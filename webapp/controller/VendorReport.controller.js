@@ -342,7 +342,7 @@ sap.ui.define([
                         if (aErrorMessages.length > 0) {
                                 var sFinalError = aErrorMessages.join("\n");
                                 sap.m.MessageBox.error("Please correct the following errors before saving:\n\n" + sFinalError);
-                                return; 
+                                return;
                         }
                         var oView = this.getView();
                         var oModel = oView.getModel();
@@ -352,7 +352,7 @@ sap.ui.define([
                         var sGroupId = "saveProposalGroup1";
 
                         aToSave.forEach(function (oData) {
-                                 var oPayload = {
+                                var oPayload = {
 
                                         "CompanyCode": oData.CompanyCode,
 
@@ -435,20 +435,45 @@ sap.ui.define([
                                         "ProposalStatus": "PENDING"
 
                                 };
-                                oModel.create("/YourEntitySet", oPayload, {
+                                oModel.create("/VendorPayment", oPayload, {
                                         groupId: sGroupId
                                 });
                         });
-
                         oModel.submitChanges({
                                 groupId: sGroupId,
-                                success: function () {
+                                success: function (oData) {
                                         oView.setBusy(false);
-                                        sap.m.MessageToast.show("Selected proposals saved successfully!");
-                                },
-                                error: function () {
+
+                                        // 1. Check if there were actual errors inside the batch response
+                                        if (oData && oData.__batchResponses && oData.__batchResponses[0].message) {
+                                                sap.m.MessageBox.error("Error from Server: " + oData.__batchResponses[0].message);
+                                                return;
+                                        }
+
+                                        sap.m.MessageToast.show("Data saved successfully for " + aToSave.length + " items.");
+
+                                        // 2. Reset the AmountProposal to 0 for the items we just saved
+                                        aToSave.forEach(function (oItem) {
+                                                oItem.AmountProposal = 0;
+                                                oItem._displayAmountProposal = 0;
+                                                oItem.isSelected = false; // Deselect them too
+                                        });
+
+                                        // 3. Update the model to reflect changes in the UI
+                                        oReportModel.refresh(true);
+
+                                        // 4. Clear table selections
+                                        var oTable = oView.byId("idReportTable"); // Ensure this ID matches your XML
+                                        if (oTable) {
+                                                oTable.removeSelections();
+                                        }
+
+                                        // 5. Instead of window.location.reload(), just re-trigger your data fetch
+                                        // this._loadReportData(); 
+                                }.bind(this),
+                                error: function (oError) {
                                         oView.setBusy(false);
-                                        sap.m.MessageBox.error("An error occurred while saving.");
+                                        sap.m.MessageBox.error("Network or Technical Error occurred.");
                                 }
                         });
                 },
